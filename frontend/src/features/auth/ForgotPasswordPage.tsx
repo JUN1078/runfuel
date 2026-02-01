@@ -21,6 +21,7 @@ export function ForgotPasswordPage() {
   if (sent) {
     return (
       <div className="text-center">
+        <span className="icon-[tabler--mail-check] mx-auto mb-3 text-4xl text-[var(--color-primary)]" />
         <h2 className="mb-2 text-xl font-semibold">Check your email</h2>
         <p className="mb-6 text-sm text-[var(--color-text-muted)]">
           If an account exists for {email}, we sent a reset link.
@@ -38,19 +39,17 @@ export function ForgotPasswordPage() {
       <p className="text-sm text-[var(--color-text-muted)]">
         Enter your email and we'll send you a reset link.
       </p>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="w-full rounded-xl border border-[var(--color-surface-light)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]"
-        placeholder="runner@example.com"
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white disabled:opacity-50"
-      >
+      <div className="input-with-icon">
+        <span className="input-icon icon-[tabler--mail]" />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="runner@example.com"
+        />
+      </div>
+      <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-center">
         {loading ? 'Sending...' : 'Send Reset Link'}
       </button>
       <Link to="/login" className="block text-center text-sm text-[var(--color-text-muted)]">

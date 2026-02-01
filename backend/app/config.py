@@ -31,8 +31,16 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o"
 
-    # CORS
+    # CORS - comma-separated for multiple origins
     FRONTEND_URL: str = "http://localhost:5173"
+    ALLOWED_ORIGINS: str = ""
+
+    @property
+    def cors_origins(self) -> list[str]:
+        origins = [self.FRONTEND_URL]
+        if self.ALLOWED_ORIGINS:
+            origins.extend([o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()])
+        return origins
 
     # Rate Limiting
     RATE_LIMIT_DEFAULT: str = "100/minute"

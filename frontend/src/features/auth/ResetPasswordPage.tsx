@@ -34,6 +34,7 @@ export function ResetPasswordPage() {
   if (done) {
     return (
       <div className="text-center">
+        <span className="icon-[tabler--circle-check] mx-auto mb-3 text-4xl text-[var(--color-primary)]" />
         <h2 className="mb-2 text-xl font-semibold">Password Reset</h2>
         <p className="mb-6 text-sm text-[var(--color-text-muted)]">
           Your password has been updated. You can now log in.
@@ -48,29 +49,29 @@ export function ResetPasswordPage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-semibold">New Password</h2>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        minLength={8}
-        className="w-full rounded-xl border border-[var(--color-surface-light)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]"
-        placeholder="New password"
-      />
-      <input
-        type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-        className="w-full rounded-xl border border-[var(--color-surface-light)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]"
-        placeholder="Confirm new password"
-      />
+      <div className="input-with-icon">
+        <span className="input-icon icon-[tabler--lock]" />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={8}
+          placeholder="New password"
+        />
+      </div>
+      <div className="input-with-icon">
+        <span className="input-icon icon-[tabler--lock-check]" />
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          placeholder="Confirm new password"
+        />
+      </div>
       {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-center">
         {loading ? 'Resetting...' : 'Reset Password'}
       </button>
     </form>

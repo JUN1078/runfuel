@@ -1,151 +1,183 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Camera, PenLine } from 'lucide-react';
+import { Camera, PenLine, Flame, Trophy, Sparkles } from 'lucide-react';
 import { ProgressRing } from '../../components/ProgressRing';
 import { FoodCard } from '../../components/FoodCard';
 import { caloriesApi } from '../../api/calories';
 import { foodApi } from '../../api/food';
+import { gamificationApi } from '../../api/gamification';
 import type { CalorieLog } from '../../types/calorie';
+import type { DailyScore, UserStats } from '../../types/gamification';
 
 export function DashboardPage() {
   const [log, setLog] = useState<CalorieLog | null>(null);
+  const [score, setScore] = useState<DailyScore | null>(null);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchToday = async () => {
+  const fetchData = async () => {
     try {
-      const { data } = await caloriesApi.getToday();
-      setLog(data);
+      const [logRes, scoreRes, statsRes] = await Promise.allSettled([
+        caloriesApi.getToday(),
+        gamificationApi.getDailyScore(),
+        gamificationApi.getStats(),
+      ]);
+      if (logRes.status === 'fulfilled') setLog(logRes.value.data);
+      if (scoreRes.status === 'fulfilled') setScore(scoreRes.value.data);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to load dashboard');
+      setError(err.response?.data?.detail || 'Failed to load');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchToday();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
-  const handleDelete = async (entryId: string) => {
-    try {
-      await caloriesApi.deleteEntry(entryId);
-      await fetchToday();
-    } catch {}
-  };
-
-  const handleToggleFavorite = async (entryId: string) => {
-    try {
-      await foodApi.toggleFavorite(entryId);
-      await fetchToday();
-    } catch {}
-  };
+  const handleDelete = async (id: string) => { try { await caloriesApi.deleteEntry(id); await fetchData(); } catch {} };
+  const handleToggleFavorite = async (id: string) => { try { await foodApi.toggleFavorite(id); await fetchData(); } catch {} };
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-primary)] border-t-transparent" />
+      <div className="space-y-4">
+        <div className="skeleton h-8 w-32 mx-auto" />
+        <div className="skeleton h-48 w-48 mx-auto rounded-full" />
+        <div className="skeleton h-16" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl bg-[var(--color-surface)] p-6 text-center">
+      <div className="glass-card p-6 text-center">
         <p className="text-[var(--color-danger)]">{error}</p>
-        <button onClick={fetchToday} className="mt-3 text-sm text-[var(--color-primary)]">
-          Retry
-        </button>
+        <button onClick={fetchData} className="mt-3 text-sm text-[var(--color-primary)] font-medium">Retry</button>
       </div>
     );
   }
 
   if (!log) return null;
 
-  const statusColor = {
-    normal: 'text-[var(--color-primary)]',
-    near_limit: 'text-[var(--color-warning)]',
-    over: 'text-[var(--color-danger)]',
-    under: 'text-[var(--color-warning)]',
-  };
-
-  // Group entries by meal type
   const mealGroups = ['breakfast', 'lunch', 'dinner', 'snack'] as const;
+  const mealIcons: Record<string, string> = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-2xl font-bold">Today</h1>
-        <p className="text-sm text-[var(--color-text-muted)]">{log.log_date}</p>
-      </div>
-
-      {/* Progress Ring */}
-      <div className="flex flex-col items-center">
-        <ProgressRing consumed={log.consumed_kcal} target={log.target_kcal} size={180} />
-        <div className="mt-4 flex justify-center gap-8 text-sm">
-          <div className="text-center">
-            <div className="text-lg font-semibold">{Math.round(log.target_kcal)}</div>
-            <div className="text-[var(--color-text-muted)]">Target</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold">{Math.round(log.consumed_kcal)}</div>
-            <div className="text-[var(--color-text-muted)]">Consumed</div>
-          </div>
-          <div className="text-center">
-            <div className={`text-lg font-semibold ${statusColor[log.status]}`}>
-              {Math.round(log.remaining_kcal)}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Today</h1>
+          <p className="text-xs text-[var(--color-text-muted)]">{log.log_date}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {stats && stats.current_streak > 0 && (
+            <div className="flex items-center gap-1 rounded-full bg-orange-500/10 px-2.5 py-1">
+              <Flame size={13} className="text-orange-400" />
+              <span className="text-xs font-bold text-orange-400">{stats.current_streak}</span>
             </div>
-            <div className="text-[var(--color-text-muted)]">Remaining</div>
-          </div>
+          )}
+          {stats && (
+            <div className="flex items-center gap-1 rounded-full bg-purple-500/10 px-2.5 py-1">
+              <Trophy size={13} className="text-purple-400" />
+              <span className="text-xs font-bold text-purple-400">Lv.{stats.level}</span>
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Score Card */}
+      {score && score.total_score > 0 && (
+        <div className="glass-card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles size={15} className="text-yellow-400" />
+              <span className="text-sm font-semibold">{score.message}</span>
+            </div>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xl font-bold text-[var(--color-primary)]">{score.total_score}</span>
+              <span className="text-[10px] text-[var(--color-text-muted)]">pts</span>
+            </div>
+          </div>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">{score.encouragement}</p>
+        </div>
+      )}
+
+      {/* Progress Ring */}
+      <div className="flex flex-col items-center">
+        <ProgressRing consumed={log.consumed_kcal} target={log.target_kcal} size={190} />
+        <div className="mt-4 grid grid-cols-3 gap-6 w-full max-w-xs">
+          {[
+            { label: 'Target', value: Math.round(log.target_kcal) },
+            { label: 'Eaten', value: Math.round(log.consumed_kcal) },
+            { label: 'Left', value: Math.round(log.remaining_kcal), colored: true },
+          ].map((item) => (
+            <div key={item.label} className="text-center">
+              <div className={`text-lg font-bold ${item.colored ? (log.remaining_kcal >= 0 ? 'text-[var(--color-primary)]' : 'text-[var(--color-danger)]') : ''}`}>
+                {item.value}
+              </div>
+              <div className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">{item.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Macros */}
+      {log.entries.length > 0 && (
+        <div className="glass-card p-3">
+          <div className="grid grid-cols-3 divide-x divide-[var(--color-surface-border)]">
+            {[
+              { key: 'protein_g', label: 'Protein', color: '#3b82f6' },
+              { key: 'carbs_g', label: 'Carbs', color: '#f59e0b' },
+              { key: 'fat_g', label: 'Fat', color: '#ef4444' },
+            ].map(({ key, label, color }) => {
+              const total = log.entries.reduce((s, e) => s + (Number((e as any)[key]) || 0), 0);
+              return (
+                <div key={key} className="text-center px-2">
+                  <div className="text-base font-bold" style={{ color }}>{Math.round(total)}g</div>
+                  <div className="text-[10px] text-[var(--color-text-muted)]">{label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Quick Actions */}
-      <div className="flex gap-3">
-        <Link
-          to="/log/photo"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white"
-        >
-          <Camera size={18} /> Photo Log
+      <div className="grid grid-cols-2 gap-3">
+        <Link to="/log/photo" className="btn-primary flex items-center justify-center gap-2 py-3 text-sm">
+          <Camera size={16} /> Photo Log
         </Link>
-        <Link
-          to="/log/manual"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--color-surface-light)] py-3 font-semibold text-[var(--color-text)]"
-        >
-          <PenLine size={18} /> Manual Log
+        <Link to="/log/manual" className="btn-secondary flex items-center justify-center gap-2 py-3 text-sm no-underline">
+          <PenLine size={16} /> Manual Log
         </Link>
       </div>
 
-      {/* Meal List */}
+      {/* Meals */}
       <div className="space-y-4">
-        {mealGroups.map((mealType) => {
-          const entries = log.entries.filter((e) => e.meal_type === mealType);
-          if (entries.length === 0) return null;
+        {mealGroups.map((type) => {
+          const entries = log.entries.filter((e) => e.meal_type === type);
+          if (!entries.length) return null;
+          const cal = entries.reduce((s, e) => s + e.calories, 0);
           return (
-            <div key={mealType}>
-              <h3 className="mb-2 text-sm font-medium capitalize text-[var(--color-text-muted)]">
-                {mealType}
-              </h3>
+            <div key={type}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="flex items-center gap-1.5 text-sm font-semibold capitalize text-[var(--color-text-secondary)]">
+                  {mealIcons[type]} {type}
+                </h3>
+                <span className="text-xs text-[var(--color-text-muted)]">{Math.round(cal)} kcal</span>
+              </div>
               <div className="space-y-2">
-                {entries.map((entry) => (
-                  <FoodCard
-                    key={entry.id}
-                    entry={entry}
-                    onDelete={handleDelete}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                ))}
+                {entries.map((e) => <FoodCard key={e.id} entry={e} onDelete={handleDelete} onToggleFavorite={handleToggleFavorite} />)}
               </div>
             </div>
           );
         })}
         {log.entries.length === 0 && (
-          <div className="rounded-xl bg-[var(--color-surface)] p-8 text-center">
-            <p className="text-[var(--color-text-muted)]">No meals logged yet today.</p>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-              Tap "Photo Log" or "Manual Log" to get started.
-            </p>
+          <div className="glass-card p-8 text-center">
+            <div className="text-4xl mb-3">🍽️</div>
+            <p className="font-medium text-[var(--color-text-secondary)]">No meals logged yet</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">Snap a photo or add manually to start</p>
           </div>
         )}
       </div>

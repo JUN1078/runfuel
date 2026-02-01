@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Literal
 from pydantic import BaseModel, Field
 
@@ -51,7 +52,7 @@ class FoodEntryResponse(BaseModel):
     photo_url: Optional[str]
     ai_confidence: Optional[float]
     is_favorite: bool
-    created_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True

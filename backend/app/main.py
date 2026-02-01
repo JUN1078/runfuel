@@ -6,7 +6,7 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
 from app.core.rate_limiter import limiter
-from app.routers import auth, users, food, calories, progress
+from app.routers import auth, users, food, calories, progress, gamification, training
 
 settings = get_settings()
 
@@ -22,7 +22,7 @@ def create_app() -> FastAPI:
     # CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.FRONTEND_URL],
+        allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type"],
@@ -40,6 +40,15 @@ def create_app() -> FastAPI:
     app.include_router(food.router, prefix=f"{prefix}/food", tags=["food"])
     app.include_router(calories.router, prefix=f"{prefix}/calories", tags=["calories"])
     app.include_router(progress.router, prefix=f"{prefix}/progress", tags=["progress"])
+    app.include_router(gamification.router, prefix=f"{prefix}/gamification", tags=["gamification"])
+    app.include_router(training.router, prefix=f"{prefix}/training", tags=["training"])
+
+    @app.on_event("startup")
+    async def startup_event():
+        from app.database import AsyncSessionLocal
+        from app.services.gamification_service import seed_badges
+        async with AsyncSessionLocal() as db:
+            await seed_badges(db)
 
     @app.get("/health")
     async def health():

@@ -3,13 +3,11 @@ import { AuthLayout } from './components/layout/AuthLayout';
 import { AppLayout } from './components/layout/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
-// Auth pages
 import { LoginPage } from './features/auth/LoginPage';
 import { RegisterPage } from './features/auth/RegisterPage';
 import { ForgotPasswordPage } from './features/auth/ForgotPasswordPage';
 import { ResetPasswordPage } from './features/auth/ResetPasswordPage';
 
-// App pages
 import { OnboardingPage } from './features/onboarding/OnboardingPage';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { PhotoCapturePage } from './features/food-log/PhotoCapturePage';
@@ -17,12 +15,13 @@ import { AIReviewPage } from './features/food-log/AIReviewPage';
 import { ManualEntryPage } from './features/food-log/ManualEntryPage';
 import { ProgressPage } from './features/progress/ProgressPage';
 import { ProfilePage } from './features/profile/ProfilePage';
+import { AchievementsPage } from './features/achievements/AchievementsPage';
+import { TrainingPage } from './features/training/TrainingPage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public auth routes */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -30,7 +29,6 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
 
-        {/* Protected app routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route element={<AppLayout />}>
@@ -39,6 +37,8 @@ export default function App() {
             <Route path="/log/photo/review" element={<AIReviewPage />} />
             <Route path="/log/manual" element={<ManualEntryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/training" element={<TrainingPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
         </Route>

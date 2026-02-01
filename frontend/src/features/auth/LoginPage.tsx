@@ -37,34 +37,34 @@ export function LoginPage() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="mb-1 block text-sm text-[var(--color-text-muted)]">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full rounded-xl border border-[var(--color-surface-light)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]"
-          placeholder="runner@example.com"
-        />
+        <div className="input-with-icon">
+          <span className="input-icon icon-[tabler--mail]" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="runner@example.com"
+          />
+        </div>
       </div>
       <div>
         <label className="mb-1 block text-sm text-[var(--color-text-muted)]">Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full rounded-xl border border-[var(--color-surface-light)] bg-[var(--color-surface)] px-4 py-3 text-[var(--color-text)] outline-none focus:border-[var(--color-primary)]"
-          placeholder="Min. 8 characters"
-        />
+        <div className="input-with-icon">
+          <span className="input-icon icon-[tabler--lock]" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Min. 8 characters"
+          />
+        </div>
       </div>
 
       {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white transition-colors hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
-      >
+      <button type="submit" disabled={loading} className="btn-primary w-full py-3 text-center">
         {loading ? 'Logging in...' : 'Log In'}
       </button>
 

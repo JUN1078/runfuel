@@ -13,6 +13,7 @@ from app.schemas.food import (
     FoodEntryResponse,
 )
 from app.services import food_service, ai_service
+from app.services import gamification_service
 
 router = APIRouter()
 
@@ -43,6 +44,10 @@ async def confirm_analysis(
     current_user: User = Depends(get_current_user),
 ):
     entries = await food_service.confirm_ai_analysis(db, current_user.id, body)
+    # Update gamification stats for each entry (photo-based)
+    for _ in entries:
+        await gamification_service.record_food_log(db, current_user.id, is_photo=True)
+    await gamification_service.check_and_award_badges(db, current_user.id)
     return [FoodEntryResponse.model_validate(e) for e in entries]
 
 
@@ -53,6 +58,9 @@ async def manual_entry(
     current_user: User = Depends(get_current_user),
 ):
     entry = await food_service.add_manual_entry(db, current_user.id, body)
+    # Update gamification stats (manual entry)
+    await gamification_service.record_food_log(db, current_user.id, is_photo=False)
+    await gamification_service.check_and_award_badges(db, current_user.id)
     return FoodEntryResponse.model_validate(entry)
 
 
