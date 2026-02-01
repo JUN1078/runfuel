@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { Camera, Upload, Loader2 } from 'lucide-react';
+import { Camera, Upload, Loader2, ArrowLeft } from 'lucide-react';
 import { foodApi } from '../../api/food';
 import { useFoodLogStore } from '../../store/foodLogStore';
 
@@ -46,25 +46,32 @@ export function PhotoCapturePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Log Food with Photo</h1>
+      <div className="flex items-center gap-3">
+        <button onClick={() => navigate('/dashboard')} className="rounded-lg p-1.5 hover:bg-white/5 transition-colors">
+          <ArrowLeft size={20} className="text-[var(--color-text-muted)]" />
+        </button>
+        <h1 className="text-2xl font-bold tracking-tight">Log Food with Photo</h1>
+      </div>
 
       {!preview ? (
         <div
           {...getRootProps()}
-          className={`flex h-64 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-colors ${
+          className={`glass-card flex h-64 cursor-pointer flex-col items-center justify-center transition-all ${
             isDragActive
-              ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10'
-              : 'border-[var(--color-surface-light)] bg-[var(--color-surface)]'
+              ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 pulse-border'
+              : ''
           }`}
         >
           <input {...getInputProps()} />
-          <Upload size={40} className="mb-3 text-[var(--color-text-muted)]" />
-          <p className="font-medium">Drop a food photo here</p>
-          <p className="text-sm text-[var(--color-text-muted)]">or tap to take a photo / choose from gallery</p>
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-primary)]/10 mb-4">
+            <Upload size={28} className="text-[var(--color-primary)]" />
+          </div>
+          <p className="font-semibold">Drop a food photo here</p>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">or tap to take a photo / choose from gallery</p>
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-2xl">
+          <div className="glass-card overflow-hidden">
             <img src={preview} alt="Food" className="h-64 w-full object-cover" />
           </div>
           <div className="flex gap-3">
@@ -73,14 +80,14 @@ export function PhotoCapturePage() {
                 setPreview(null);
                 useFoodLogStore.getState().setSelectedPhoto(null);
               }}
-              className="flex-1 rounded-xl border border-[var(--color-surface-light)] py-3 font-semibold"
+              className="btn-secondary flex-1 py-3 text-sm"
             >
               Retake
             </button>
             <button
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white disabled:opacity-50"
+              className="btn-primary flex flex-1 items-center justify-center gap-2 py-3 text-sm"
             >
               {isAnalyzing ? (
                 <>
@@ -97,7 +104,7 @@ export function PhotoCapturePage() {
       )}
 
       {error && (
-        <div className="rounded-xl bg-red-500/10 p-4 text-sm text-[var(--color-danger)]">
+        <div className="glass-card border-[var(--color-danger)]/20 p-4 text-sm text-[var(--color-danger)]">
           {error}
         </div>
       )}

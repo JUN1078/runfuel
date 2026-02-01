@@ -23,48 +23,54 @@ export function RunningProfileStep({ data, onChange }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <label className="mb-3 block text-sm font-medium">Running Frequency (per week)</label>
+        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Running Frequency (per week)</label>
         <div className="grid grid-cols-2 gap-2">
-          {frequencyOptions.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange('running_frequency', opt.value)}
-              className={`rounded-xl p-3 text-left transition-colors ${
-                data.running_frequency === opt.value
-                  ? 'bg-[var(--color-primary)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)]'
-              }`}
-            >
-              <div className="font-medium">{opt.label}</div>
-              <div className={`text-xs ${data.running_frequency === opt.value ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
-                {opt.desc}
-              </div>
-            </button>
-          ))}
+          {frequencyOptions.map((opt) => {
+            const selected = data.running_frequency === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange('running_frequency', opt.value)}
+                className={`rounded-xl p-3 text-left transition-all ${
+                  selected
+                    ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
+                    : 'bg-[var(--color-surface-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
+                }`}
+              >
+                <div className="font-semibold text-sm">{opt.label}</div>
+                <div className={`text-xs ${selected ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
+                  {opt.desc}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div>
-        <label className="mb-3 block text-sm font-medium">Training Intensity</label>
+        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Training Intensity</label>
         <div className="grid grid-cols-2 gap-2">
-          {intensityOptions.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange('training_intensity', opt.value)}
-              className={`rounded-xl p-3 text-left transition-colors ${
-                data.training_intensity === opt.value
-                  ? 'bg-[var(--color-primary)] text-white'
-                  : 'bg-[var(--color-surface)] text-[var(--color-text)]'
-              }`}
-            >
-              <div className="font-medium">{opt.label}</div>
-              <div className={`text-xs ${data.training_intensity === opt.value ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
-                {opt.desc}
-              </div>
-            </button>
-          ))}
+          {intensityOptions.map((opt) => {
+            const selected = data.training_intensity === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange('training_intensity', opt.value)}
+                className={`rounded-xl p-3 text-left transition-all ${
+                  selected
+                    ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
+                    : 'bg-[var(--color-surface-light)] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
+                }`}
+              >
+                <div className="font-semibold text-sm">{opt.label}</div>
+                <div className={`text-xs ${selected ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
+                  {opt.desc}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

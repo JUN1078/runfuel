@@ -6,13 +6,14 @@ interface Props {
   onChange: <K extends keyof ProfileFormData>(key: K, value: ProfileFormData[K]) => void;
 }
 
-const goalOptions: { value: Goal; label: string; desc: string; detail: string; icon: typeof Flame }[] = [
+const goalOptions: { value: Goal; label: string; desc: string; detail: string; icon: typeof Flame; color: string }[] = [
   {
     value: 'deficit',
     label: 'Fat Loss',
     desc: '-400 kcal/day',
     detail: 'Lose body fat while maintaining running performance. Smart deficit with safety guards on long run days.',
     icon: Flame,
+    color: 'text-orange-400',
   },
   {
     value: 'performance',
@@ -20,6 +21,7 @@ const goalOptions: { value: Goal; label: string; desc: string; detail: string; i
     desc: 'Maintenance',
     detail: 'Fuel your training optimally. No surplus or deficit — eat to run your best.',
     icon: Zap,
+    color: 'text-blue-400',
   },
   {
     value: 'bulking',
@@ -27,6 +29,7 @@ const goalOptions: { value: Goal; label: string; desc: string; detail: string; i
     desc: '+400 kcal/day',
     detail: 'Build muscle mass with a controlled surplus alongside your running program.',
     icon: Dumbbell,
+    color: 'text-purple-400',
   },
 ];
 
@@ -43,12 +46,16 @@ export function GoalSelectionStep({ data, onChange }: Props) {
             onClick={() => onChange('goal', opt.value)}
             className={`w-full rounded-xl p-4 text-left transition-all ${
               selected
-                ? 'bg-[var(--color-primary)] text-white ring-2 ring-[var(--color-primary)]'
-                : 'bg-[var(--color-surface)] text-[var(--color-text)] ring-1 ring-transparent hover:ring-[var(--color-surface-light)]'
+                ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_12px_rgba(34,197,94,0.3)] ring-2 ring-[var(--color-primary)]'
+                : 'bg-[var(--color-surface-light)] text-[var(--color-text)] ring-1 ring-transparent hover:bg-[var(--color-surface-hover)]'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Icon size={24} />
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                selected ? 'bg-white/15' : 'bg-[var(--color-surface)]'
+              }`}>
+                <Icon size={20} className={selected ? 'text-white' : opt.color} />
+              </div>
               <div>
                 <div className="font-semibold">{opt.label}</div>
                 <div className={`text-xs ${selected ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>

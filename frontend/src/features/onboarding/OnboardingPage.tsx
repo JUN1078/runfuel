@@ -51,12 +51,14 @@ export function OnboardingPage() {
   ];
 
   const stepTitles = ['Body Metrics', 'Running Profile', 'Your Goal'];
+  const stepEmoji = ['📏', '🏃', '🎯'];
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md page-enter">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold">Set Up Your Profile</h1>
+          <div className="text-4xl mb-3">{stepEmoji[step]}</div>
+          <h1 className="text-2xl font-bold tracking-tight">Set Up Your Profile</h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">
             Step {step + 1} of {steps.length}: {stepTitles[step]}
           </p>
@@ -65,23 +67,25 @@ export function OnboardingPage() {
             {steps.map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i <= step ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-surface-light)]'
+                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                  i <= step ? 'progress-bar' : 'bg-[var(--color-surface-light)]'
                 }`}
               />
             ))}
           </div>
         </div>
 
-        {steps[step]}
+        <div className="glass-card p-5">
+          {steps[step]}
+        </div>
 
         {error && <p className="mt-4 text-center text-sm text-[var(--color-danger)]">{error}</p>}
 
-        <div className="mt-8 flex gap-3">
+        <div className="mt-6 flex gap-3">
           {step > 0 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="flex-1 rounded-xl border border-[var(--color-surface-light)] py-3 font-semibold text-[var(--color-text)]"
+              className="btn-secondary flex-1 py-3 text-sm"
             >
               Back
             </button>
@@ -89,7 +93,7 @@ export function OnboardingPage() {
           {step < steps.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="flex-1 rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white"
+              className="btn-primary flex-1 py-3 text-sm"
             >
               Next
             </button>
@@ -97,7 +101,7 @@ export function OnboardingPage() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="flex-1 rounded-xl bg-[var(--color-primary)] py-3 font-semibold text-white disabled:opacity-50"
+              className="btn-primary flex-1 py-3 text-sm"
             >
               {loading ? 'Saving...' : 'Start Tracking'}
             </button>

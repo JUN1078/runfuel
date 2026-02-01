@@ -154,7 +154,7 @@ export function DashboardPage() {
       </div>
 
       {/* Meals */}
-      <div className="space-y-4">
+      <div className="space-y-4 stagger-children">
         {mealGroups.map((type) => {
           const entries = log.entries.filter((e) => e.meal_type === type);
           if (!entries.length) return null;

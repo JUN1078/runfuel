@@ -114,17 +114,31 @@ export function TrainingPage() {
 
           {/* Generate form */}
           {showGenerate && (
-            <div className="glass-card p-4 space-y-3">
-              <h3 className="text-sm font-semibold">Generate AI Plan</h3>
-              <input placeholder="Race name (optional)" value={genForm.race_name} onChange={e => setGenForm({...genForm, race_name: e.target.value})} />
-              <div className="grid grid-cols-2 gap-2">
-                <input type="number" placeholder="Distance (km)" value={genForm.race_distance_km} onChange={e => setGenForm({...genForm, race_distance_km: e.target.value})} />
-                <input type="number" placeholder="Weeks" value={genForm.weeks} onChange={e => setGenForm({...genForm, weeks: e.target.value})} />
+            <div className="glass-card p-4 space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Sparkles size={14} className="text-purple-400" /> Generate AI Plan
+              </h3>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Race Name</label>
+                <input placeholder="e.g. Boston Marathon (optional)" value={genForm.race_name} onChange={e => setGenForm({...genForm, race_name: e.target.value})} />
               </div>
-              <input type="number" placeholder="Current weekly km" value={genForm.current_weekly_km} onChange={e => setGenForm({...genForm, current_weekly_km: e.target.value})} />
-              <div className="flex gap-2">
-                <button onClick={() => setShowGenerate(false)} className="btn-secondary flex-1 py-2 text-sm">Cancel</button>
-                <button onClick={handleGenerate} disabled={generating} className="btn-primary flex-1 py-2 text-sm disabled:opacity-50">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Distance (km)</label>
+                  <input type="number" placeholder="42.2" value={genForm.race_distance_km} onChange={e => setGenForm({...genForm, race_distance_km: e.target.value})} />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Weeks</label>
+                  <input type="number" placeholder="12" value={genForm.weeks} onChange={e => setGenForm({...genForm, weeks: e.target.value})} />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Current Weekly KM</label>
+                <input type="number" placeholder="e.g. 30" value={genForm.current_weekly_km} onChange={e => setGenForm({...genForm, current_weekly_km: e.target.value})} />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => setShowGenerate(false)} className="btn-secondary flex-1 py-2.5 text-sm">Cancel</button>
+                <button onClick={handleGenerate} disabled={generating} className="btn-primary flex-1 py-2.5 text-sm disabled:opacity-50">
                   {generating ? 'Generating...' : 'Generate'}
                 </button>
               </div>
@@ -227,32 +241,57 @@ export function TrainingPage() {
           </button>
 
           {showNewRace && (
-            <div className="glass-card p-4 space-y-3">
-              <h3 className="text-sm font-semibold">New Race</h3>
-              <input placeholder="Race name *" value={raceForm.name} onChange={e => setRaceForm({...raceForm, name: e.target.value})} />
-              <input type="date" value={raceForm.race_date} onChange={e => setRaceForm({...raceForm, race_date: e.target.value})} />
-              <select value={raceForm.category} onChange={e => setRaceForm({...raceForm, category: e.target.value})}>
-                <option value="">Category</option>
-                <option value="5k">5K</option>
-                <option value="10k">10K</option>
-                <option value="half_marathon">Half Marathon</option>
-                <option value="marathon">Marathon</option>
-                <option value="ultra_50k">Ultra 50K</option>
-                <option value="ultra_100k">Ultra 100K</option>
-                <option value="trail">Trail</option>
-                <option value="other">Other</option>
-              </select>
-              <div className="grid grid-cols-2 gap-2">
-                <input type="number" placeholder="Distance (km)" value={raceForm.distance_km} onChange={e => setRaceForm({...raceForm, distance_km: e.target.value})} />
-                <input type="number" placeholder="Elevation (m)" value={raceForm.elevation_gain_m} onChange={e => setRaceForm({...raceForm, elevation_gain_m: e.target.value})} />
+            <div className="glass-card p-4 space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Flag size={14} className="text-[var(--color-primary)]" /> New Race
+              </h3>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Race Name *</label>
+                <input placeholder="e.g. Berlin Marathon" value={raceForm.name} onChange={e => setRaceForm({...raceForm, name: e.target.value})} />
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <input placeholder="Target time" value={raceForm.target_time} onChange={e => setRaceForm({...raceForm, target_time: e.target.value})} />
-                <input placeholder="Location" value={raceForm.location} onChange={e => setRaceForm({...raceForm, location: e.target.value})} />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Date *</label>
+                  <input type="date" value={raceForm.race_date} onChange={e => setRaceForm({...raceForm, race_date: e.target.value})} />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Category</label>
+                  <select value={raceForm.category} onChange={e => setRaceForm({...raceForm, category: e.target.value})}>
+                    <option value="">Select...</option>
+                    <option value="5k">5K</option>
+                    <option value="10k">10K</option>
+                    <option value="half_marathon">Half Marathon</option>
+                    <option value="marathon">Marathon</option>
+                    <option value="ultra_50k">Ultra 50K</option>
+                    <option value="ultra_100k">Ultra 100K</option>
+                    <option value="trail">Trail</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => setShowNewRace(false)} className="btn-secondary flex-1 py-2 text-sm">Cancel</button>
-                <button onClick={handleAddRace} disabled={!raceForm.name || !raceForm.race_date} className="btn-primary flex-1 py-2 text-sm disabled:opacity-50">Save</button>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Distance (km)</label>
+                  <input type="number" placeholder="42.2" value={raceForm.distance_km} onChange={e => setRaceForm({...raceForm, distance_km: e.target.value})} />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Elevation (m)</label>
+                  <input type="number" placeholder="500" value={raceForm.elevation_gain_m} onChange={e => setRaceForm({...raceForm, elevation_gain_m: e.target.value})} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Target Time</label>
+                  <input placeholder="e.g. 3:30:00" value={raceForm.target_time} onChange={e => setRaceForm({...raceForm, target_time: e.target.value})} />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Location</label>
+                  <input placeholder="e.g. Berlin, DE" value={raceForm.location} onChange={e => setRaceForm({...raceForm, location: e.target.value})} />
+                </div>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => setShowNewRace(false)} className="btn-secondary flex-1 py-2.5 text-sm">Cancel</button>
+                <button onClick={handleAddRace} disabled={!raceForm.name || !raceForm.race_date} className="btn-primary flex-1 py-2.5 text-sm disabled:opacity-50">Save</button>
               </div>
             </div>
           )}
