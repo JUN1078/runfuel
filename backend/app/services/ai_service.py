@@ -6,7 +6,15 @@ from openai import AsyncOpenAI
 from app.config import get_settings
 
 settings = get_settings()
-client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+
+_client = None
+
+
+def _get_client() -> AsyncOpenAI:
+    global _client
+    if _client is None:
+        _client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    return _client
 
 SYSTEM_PROMPTS = {
     "deficit": (
@@ -41,7 +49,7 @@ async def analyze_food_photo(image_bytes: bytes, user_goal: str) -> dict:
 
     system_prompt = SYSTEM_PROMPTS.get(user_goal, SYSTEM_PROMPTS["performance"])
 
-    response = await client.chat.completions.create(
+    response = await _get_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
         response_format={"type": "json_object"},
         messages=[

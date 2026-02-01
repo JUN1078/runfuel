@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +20,7 @@ router = APIRouter()
 
 @router.get("/weekly", response_model=WeeklySummaryResponse)
 async def weekly_summary(
-    date_ref: date = Query(default=None, alias="date"),
+    date_ref: Optional[date] = Query(default=None, alias="date"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):

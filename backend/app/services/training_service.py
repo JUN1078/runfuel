@@ -14,7 +14,15 @@ from app.models.calorie_log import CalorieLog
 from app.core.exceptions import NotFoundError, BadRequestError
 
 settings = get_settings()
-ai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+
+_ai_client = None
+
+
+def _get_ai_client() -> AsyncOpenAI:
+    global _ai_client
+    if _ai_client is None:
+        _ai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    return _ai_client
 
 
 # --- Race CRUD ---
@@ -204,7 +212,7 @@ Return a JSON object:
 Include rest days. Build volume progressively with a taper in final 2 weeks.
 Use session types: easy_run, tempo, interval, long_run, recovery, rest, strength, cross_training, trail."""
 
-    response = await ai_client.chat.completions.create(
+    response = await _get_ai_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
         response_format={"type": "json_object"},
         messages=[
@@ -332,7 +340,7 @@ Return JSON:
   "highlights": "positive highlights from the week"
 }}"""
 
-    response = await ai_client.chat.completions.create(
+    response = await _get_ai_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
         response_format={"type": "json_object"},
         messages=[

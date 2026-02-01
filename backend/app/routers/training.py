@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -140,7 +141,7 @@ async def get_week_view(
 # --- Weekly Feedback ---
 @router.post("/feedback", response_model=WeeklyFeedbackResponse)
 async def generate_feedback(
-    week_start: date = Query(default=None),
+    week_start: Optional[date] = Query(default=None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):

@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,7 +35,7 @@ async def get_badges(
 
 @router.get("/daily-score", response_model=DailyScoreResponse)
 async def get_daily_score(
-    log_date: date = Query(default=None),
+    log_date: Optional[date] = Query(default=None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
