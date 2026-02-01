@@ -80,7 +80,10 @@ async def refresh_tokens(
         )
         raise UnauthorizedError("Token reuse detected. All sessions revoked.")
 
-    if token_record.expires_at < datetime.now(timezone.utc):
+    # MySQL returns naive datetimes — make both tz-aware for safe comparison
+    now_utc = datetime.now(timezone.utc)
+    expires = token_record.expires_at if token_record.expires_at.tzinfo else token_record.expires_at.replace(tzinfo=timezone.utc)
+    if expires < now_utc:
         raise UnauthorizedError("Refresh token expired")
 
     # Revoke old token
