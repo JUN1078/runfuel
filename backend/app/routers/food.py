@@ -8,6 +8,7 @@ from app.dependencies import get_current_user
 from app.models.user import User, UserProfile
 from app.schemas.food import (
     AIAnalysisResponse,
+    TextAnalyzeRequest,
     ConfirmAnalysisRequest,
     ManualFoodEntry,
     FoodEntryResponse,
@@ -34,6 +35,23 @@ async def analyze_photo(
     image_bytes = await photo.read()
     analysis = await ai_service.analyze_food_photo(image_bytes, user_goal)
 
+    return AIAnalysisResponse(**analysis)
+
+
+@router.post("/analyze-text", response_model=AIAnalysisResponse)
+async def analyze_text(
+    body: TextAnalyzeRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Analyze food from a text description using AI."""
+    result = await db.execute(
+        select(UserProfile).where(UserProfile.user_id == current_user.id)
+    )
+    profile = result.scalar_one_or_none()
+    user_goal = profile.goal if profile else "performance"
+
+    analysis = await ai_service.analyze_food_text(body.description, user_goal)
     return AIAnalysisResponse(**analysis)
 
 

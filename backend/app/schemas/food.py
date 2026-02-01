@@ -12,12 +12,19 @@ class FoodItemAI(BaseModel):
     fat_g: Optional[float] = None
     fiber_g: Optional[float] = None
     confidence: float = Field(ge=0, le=1)
+    health_rating: Optional[Literal["healthy", "average", "unhealthy"]] = None
 
 
 class AIAnalysisResponse(BaseModel):
     items: list[FoodItemAI]
     total_calories: float
     meal_notes: str = ""
+    health_evaluation: Optional[Literal["healthy", "average", "unhealthy"]] = None
+    health_tip: Optional[str] = None
+
+
+class TextAnalyzeRequest(BaseModel):
+    description: str = Field(min_length=3, max_length=1000)
 
 
 class ConfirmAnalysisRequest(BaseModel):

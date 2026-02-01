@@ -1,4 +1,4 @@
-import { Trash2, Heart } from 'lucide-react';
+import { Trash2, Heart, Camera, Type } from 'lucide-react';
 import type { FoodEntry } from '../types/food';
 
 interface FoodCardProps {
@@ -20,8 +20,13 @@ export function FoodCard({ entry, onDelete, onToggleFavorite }: FoodCardProps) {
           <div className="flex items-center gap-2">
             <h4 className="font-semibold truncate">{entry.food_name}</h4>
             {entry.source === 'ai_photo' && (
-              <span className="shrink-0 rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-medium text-purple-400">
-                AI
+              <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-medium text-purple-400">
+                <Camera size={9} /> AI
+              </span>
+            )}
+            {entry.source === 'ai_text' && (
+              <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-medium text-blue-400">
+                <Type size={9} /> AI
               </span>
             )}
           </div>

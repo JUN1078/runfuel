@@ -1,9 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Trash2, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Check, Trash2, ArrowLeft, AlertTriangle, ShieldCheck, ShieldAlert, ShieldMinus, Lightbulb } from 'lucide-react';
 import { useFoodLogStore } from '../../store/foodLogStore';
 import { foodApi } from '../../api/food';
-import type { MealType } from '../../types/food';
+import type { MealType, HealthRating } from '../../types/food';
+
+const healthConfig: Record<string, { label: string; color: string; bg: string; icon: typeof ShieldCheck }> = {
+  healthy: { label: 'Healthy', color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: ShieldCheck },
+  average: { label: 'Average', color: 'text-amber-400', bg: 'bg-amber-500/10', icon: ShieldMinus },
+  unhealthy: { label: 'Unhealthy', color: 'text-rose-400', bg: 'bg-rose-500/10', icon: ShieldAlert },
+};
+
+function HealthBadge({ rating, size = 'sm' }: { rating?: HealthRating; size?: 'sm' | 'lg' }) {
+  if (!rating) return null;
+  const config = healthConfig[rating];
+  if (!config) return null;
+  const Icon = config.icon;
+
+  if (size === 'lg') {
+    return (
+      <div className={`flex items-center gap-2 rounded-xl px-3 py-2 ${config.bg}`}>
+        <Icon size={18} className={config.color} />
+        <span className={`text-sm font-semibold ${config.color}`}>{config.label}</span>
+      </div>
+    );
+  }
+
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${config.bg} ${config.color}`}>
+      <Icon size={10} />
+      {config.label}
+    </span>
+  );
+}
 
 export function AIReviewPage() {
   const navigate = useNavigate();
@@ -47,7 +76,23 @@ export function AIReviewPage() {
         <h1 className="text-2xl font-bold tracking-tight">Review Analysis</h1>
       </div>
 
-      {analysisResult.meal_notes && (
+      {/* Health evaluation + tip */}
+      {analysisResult.health_evaluation && (
+        <div className="glass-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Meal Health</span>
+            <HealthBadge rating={analysisResult.health_evaluation} size="lg" />
+          </div>
+          {analysisResult.health_tip && (
+            <div className="flex items-start gap-2 rounded-lg bg-[var(--color-surface)] p-3">
+              <Lightbulb size={15} className="text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">{analysisResult.health_tip}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {analysisResult.meal_notes && !analysisResult.health_evaluation && (
         <div className="glass-card p-3 text-sm text-blue-300 border-blue-500/20">
           {analysisResult.meal_notes}
         </div>
@@ -79,16 +124,27 @@ export function AIReviewPage() {
           <div key={index} className="glass-card p-4">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <input
-                  value={item.name}
-                  onChange={(e) => updateItem(index, { ...item, name: e.target.value })}
-                  className="w-full bg-transparent font-semibold outline-none border-none p-0"
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    value={item.name}
+                    onChange={(e) => updateItem(index, { ...item, name: e.target.value })}
+                    className="w-full bg-transparent font-semibold outline-none border-none p-0"
+                  />
+                  <HealthBadge rating={item.health_rating} />
+                </div>
                 <input
                   value={item.portion}
                   onChange={(e) => updateItem(index, { ...item, portion: e.target.value })}
                   className="mt-1 w-full bg-transparent text-sm text-[var(--color-text-muted)] outline-none border-none p-0"
                 />
+                {/* Macros row */}
+                {(item.protein_g || item.carbs_g || item.fat_g) && (
+                  <div className="mt-2 flex gap-3 text-[10px] text-[var(--color-text-muted)]">
+                    {item.protein_g != null && <span className="flex items-center gap-1"><span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-400" />P {item.protein_g}g</span>}
+                    {item.carbs_g != null && <span className="flex items-center gap-1"><span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-400" />C {item.carbs_g}g</span>}
+                    {item.fat_g != null && <span className="flex items-center gap-1"><span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-400" />F {item.fat_g}g</span>}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <input

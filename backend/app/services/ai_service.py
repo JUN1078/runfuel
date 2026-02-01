@@ -16,6 +16,7 @@ def _get_client() -> AsyncOpenAI:
         _client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
     return _client
 
+
 SYSTEM_PROMPTS = {
     "deficit": (
         "You are a nutrition analyst for a runner on a calorie deficit. "
@@ -34,12 +35,27 @@ SYSTEM_PROMPTS = {
     ),
 }
 
-ANALYSIS_PROMPT = (
-    "Analyze this food photo. Return a JSON object with:\n"
+ANALYSIS_PROMPT_BASE = (
+    "Return a JSON object with:\n"
     '{"items": [{"name": "food name", "portion": "estimated portion size", '
     '"calories": number, "protein_g": number, "carbs_g": number, '
-    '"fat_g": number, "fiber_g": number, "confidence": 0.0-1.0}], '
-    '"total_calories": number, "meal_notes": "brief note about the meal"}'
+    '"fat_g": number, "fiber_g": number, "confidence": 0.0-1.0, '
+    '"health_rating": "healthy" or "average" or "unhealthy"}], '
+    '"total_calories": number, "meal_notes": "brief note about the meal", '
+    '"health_evaluation": "healthy" or "average" or "unhealthy", '
+    '"health_tip": "one sentence tip about this meal for a runner"}\n\n'
+    "Health rating rules:\n"
+    '- "healthy": whole foods, lean protein, vegetables, fruits, whole grains, good balance\n'
+    '- "average": mixed quality, some processed foods, acceptable but could be better\n'
+    '- "unhealthy": highly processed, excessive sugar/fat, fried foods, poor nutritional value'
+)
+
+PHOTO_ANALYSIS_PROMPT = "Analyze this food photo. " + ANALYSIS_PROMPT_BASE
+
+TEXT_ANALYSIS_PROMPT = (
+    "Analyze the following food description and estimate calories and macros as accurately as possible. "
+    + ANALYSIS_PROMPT_BASE
+    + "\n\nFood description: {description}"
 )
 
 
@@ -57,7 +73,7 @@ async def analyze_food_photo(image_bytes: bytes, user_goal: str) -> dict:
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": ANALYSIS_PROMPT},
+                    {"type": "text", "text": PHOTO_ANALYSIS_PROMPT},
                     {
                         "type": "image_url",
                         "image_url": {
@@ -66,6 +82,24 @@ async def analyze_food_photo(image_bytes: bytes, user_goal: str) -> dict:
                     },
                 ],
             },
+        ],
+        max_tokens=1000,
+    )
+
+    return json.loads(response.choices[0].message.content)
+
+
+async def analyze_food_text(description: str, user_goal: str) -> dict:
+    """Analyze food from a text description, return structured analysis."""
+    system_prompt = SYSTEM_PROMPTS.get(user_goal, SYSTEM_PROMPTS["performance"])
+    prompt = TEXT_ANALYSIS_PROMPT.format(description=description)
+
+    response = await _get_client().chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
         ],
         max_tokens=1000,
     )

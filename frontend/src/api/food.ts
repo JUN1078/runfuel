@@ -11,6 +11,11 @@ export const foodApi = {
     });
   },
 
+  analyzeText: (description: string) =>
+    apiClient.post<AIAnalysisResponse>('/api/v1/food/analyze-text', { description }, {
+      timeout: 30000,
+    }),
+
   confirmAnalysis: (data: ConfirmAnalysisRequest) =>
     apiClient.post<FoodEntry[]>('/api/v1/food/confirm-analysis', data),
 

@@ -1,5 +1,6 @@
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
-export type FoodSource = 'ai_photo' | 'manual' | 'search' | 'favorite';
+export type FoodSource = 'ai_photo' | 'ai_text' | 'manual' | 'search' | 'favorite';
+export type HealthRating = 'healthy' | 'average' | 'unhealthy';
 
 export interface FoodItemAI {
   name: string;
@@ -10,12 +11,15 @@ export interface FoodItemAI {
   fat_g: number | null;
   fiber_g: number | null;
   confidence: number;
+  health_rating?: HealthRating;
 }
 
 export interface AIAnalysisResponse {
   items: FoodItemAI[];
   total_calories: number;
   meal_notes: string;
+  health_evaluation?: HealthRating;
+  health_tip?: string;
 }
 
 export interface FoodEntry {

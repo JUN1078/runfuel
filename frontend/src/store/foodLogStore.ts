@@ -1,11 +1,19 @@
 import { create } from 'zustand';
-import type { FoodItemAI } from '../types/food';
+import type { FoodItemAI, HealthRating } from '../types/food';
+
+interface AnalysisResult {
+  items: FoodItemAI[];
+  total_calories: number;
+  meal_notes: string;
+  health_evaluation?: HealthRating;
+  health_tip?: string;
+}
 
 interface FoodLogState {
-  analysisResult: { items: FoodItemAI[]; total_calories: number; meal_notes: string } | null;
+  analysisResult: AnalysisResult | null;
   selectedPhoto: File | null;
   isAnalyzing: boolean;
-  setAnalysisResult: (result: { items: FoodItemAI[]; total_calories: number; meal_notes: string } | null) => void;
+  setAnalysisResult: (result: AnalysisResult | null) => void;
   setSelectedPhoto: (photo: File | null) => void;
   setAnalyzing: (analyzing: boolean) => void;
   updateItem: (index: number, item: FoodItemAI) => void;

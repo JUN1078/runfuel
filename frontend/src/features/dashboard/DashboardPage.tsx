@@ -40,7 +40,7 @@ export function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="mx-auto max-w-lg space-y-4">
         <div className="skeleton h-8 w-32 mx-auto" />
         <div className="skeleton h-48 w-48 mx-auto rounded-full" />
         <div className="skeleton h-16" />
@@ -50,9 +50,11 @@ export function DashboardPage() {
 
   if (error) {
     return (
-      <div className="glass-card p-6 text-center">
-        <p className="text-[var(--color-danger)]">{error}</p>
-        <button onClick={fetchData} className="mt-3 text-sm text-[var(--color-primary)] font-medium">Retry</button>
+      <div className="mx-auto max-w-lg">
+        <div className="glass-card p-6 text-center">
+          <p className="text-[var(--color-danger)]">{error}</p>
+          <button onClick={fetchData} className="mt-3 text-sm text-[var(--color-primary)] font-medium">Retry</button>
+        </div>
       </div>
     );
   }
@@ -63,7 +65,7 @@ export function DashboardPage() {
   const mealIcons: Record<string, string> = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-lg space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -146,7 +148,7 @@ export function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <Link to="/log/photo" className="btn-primary flex items-center justify-center gap-2 py-3 text-sm">
-          <Camera size={16} /> Photo Log
+          <Camera size={16} /> Photo / Text
         </Link>
         <Link to="/log/manual" className="btn-secondary flex items-center justify-center gap-2 py-3 text-sm no-underline">
           <PenLine size={16} /> Manual Log
@@ -177,7 +179,7 @@ export function DashboardPage() {
           <div className="glass-card p-8 text-center">
             <div className="text-4xl mb-3">🍽️</div>
             <p className="font-medium text-[var(--color-text-secondary)]">No meals logged yet</p>
-            <p className="mt-1 text-xs text-[var(--color-text-muted)]">Snap a photo or add manually to start</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">Snap a photo or describe your food to start</p>
           </div>
         )}
       </div>
