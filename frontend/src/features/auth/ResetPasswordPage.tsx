@@ -35,7 +35,7 @@ export function ResetPasswordPage() {
     return (
       <div className="text-center">
         <span className="icon-[tabler--circle-check] mx-auto mb-3 text-4xl text-[var(--color-primary)]" />
-        <h2 className="mb-2 text-xl font-semibold">Password Reset</h2>
+        <h2 className="mb-2 text-xl font-light">Password Reset</h2>
         <p className="mb-6 text-sm text-[var(--color-text-muted)]">
           Your password has been updated. You can now log in.
         </p>
@@ -48,7 +48,7 @@ export function ResetPasswordPage() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-semibold">New Password</h2>
+      <h2 className="text-xl font-light">New Password</h2>
       <div className="input-with-icon">
         <span className="input-icon icon-[tabler--lock]" />
         <input

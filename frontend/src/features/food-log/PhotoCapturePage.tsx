@@ -50,7 +50,6 @@ export function PhotoCapturePage() {
     try {
       let data;
       if (hasPhoto && hasText) {
-        // Photo + text combined for stronger validation
         const res = await foodApi.analyzePhotoWithText(selectedPhoto!, textInput.trim());
         data = res.data;
       } else if (hasPhoto) {
@@ -70,18 +69,18 @@ export function PhotoCapturePage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-7">
       {/* Header */}
       <div className="flex items-center gap-3">
         <button onClick={() => navigate('/dashboard')} className="rounded-lg p-1.5 hover:bg-white/5 transition-colors">
           <ArrowLeft size={20} className="text-[var(--color-text-muted)]" />
         </button>
-        <h1 className="text-2xl font-bold tracking-tight">Log Food</h1>
+        <h1 className="text-2xl font-light tracking-tight">Log Food</h1>
       </div>
 
       {/* Meal type selector */}
       <div>
-        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
+        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
         <div className="grid grid-cols-4 gap-2">
           {mealOptions.map(({ type, emoji, label }) => (
             <button
@@ -89,7 +88,7 @@ export function PhotoCapturePage() {
               onClick={() => setMealType(type)}
               className={`rounded-xl py-2.5 text-xs font-medium transition-all ${
                 mealType === type
-                  ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
+                  ? 'bg-[var(--color-primary)] text-[#0B1C22] shadow-[0_2px_8px_rgba(94,212,198,0.25)]'
                   : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
@@ -102,7 +101,7 @@ export function PhotoCapturePage() {
 
       {/* Photo section */}
       <div>
-        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
           Photo
         </label>
         {!preview ? (
@@ -116,7 +115,7 @@ export function PhotoCapturePage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-primary)]/10 mb-3">
               <Upload size={24} className="text-[var(--color-primary)]" />
             </div>
-            <p className="font-semibold text-sm">Drop a food photo here</p>
+            <p className="font-normal text-sm">Drop a food photo here</p>
             <p className="mt-1 text-xs text-[var(--color-text-muted)]">or tap to take a photo / choose from gallery</p>
           </div>
         ) : (
@@ -137,9 +136,9 @@ export function PhotoCapturePage() {
         )}
       </div>
 
-      {/* Text description — always visible below photo */}
+      {/* Text description */}
       <div className="glass-card p-4">
-        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
           Describe your food {preview ? '(strengthens photo analysis)' : '(or use text only)'}
         </label>
         <textarea

@@ -10,20 +10,20 @@ const navItems = [
 
 export function Navbar() {
   return (
-    <nav className="sticky bottom-0 z-50 border-t border-[var(--color-surface-border)] bg-[var(--color-surface)]/95 backdrop-blur-xl lg:rounded-b-3xl">
-      <div className="flex items-end justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+    <nav className="sticky bottom-0 z-50 border-t border-[var(--color-surface-border)] bg-[rgba(11,28,34,0.92)] backdrop-blur-xl lg:rounded-b-[20px]">
+      <div className="flex items-end justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
         {navItems.map(({ to, icon, iconActive, label, center }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
               center
-                ? `relative -mt-5 flex flex-col items-center gap-0.5 text-[10px] font-medium transition-all duration-200 ${
+                ? `relative -mt-5 flex flex-col items-center gap-0.5 text-[10px] font-medium transition-all duration-300 ${
                     isActive
                       ? 'text-[var(--color-primary)]'
                       : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
                   }`
-                : `relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] font-medium transition-all duration-200 ${
+                : `relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] font-medium transition-all duration-300 ${
                     isActive
                       ? 'text-[var(--color-primary)]'
                       : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
@@ -34,10 +34,10 @@ export function Navbar() {
               center ? (
                 <>
                   <span
-                    className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-200 ${
+                    className={`flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-all duration-300 ${
                       isActive
-                        ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_12px_rgba(34,197,94,0.4)]'
-                        : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] border border-[var(--color-surface-border)]'
+                        ? 'bg-[var(--color-primary)] text-[#0B1C22] shadow-[0_4px_20px_rgba(94,212,198,0.3)]'
+                        : 'bg-[rgba(14,42,47,0.8)] text-[var(--color-text-muted)] border border-[var(--color-surface-border)]'
                     }`}
                   >
                     <span className={`${isActive ? iconActive : icon} text-[24px]`} />
@@ -46,10 +46,10 @@ export function Navbar() {
                 </>
               ) : (
                 <>
-                  <span className={`${isActive ? iconActive : icon} text-[22px]`} />
+                  <span className={`${isActive ? iconActive : icon} text-[20px] transition-transform duration-300 ${isActive ? 'scale-110' : ''}`} />
                   <span>{label}</span>
                   {isActive && (
-                    <span className="absolute bottom-0 h-1 w-1 rounded-full bg-[var(--color-primary)]" />
+                    <span className="absolute -bottom-0.5 h-[2px] w-4 rounded-full bg-[var(--color-primary)]" />
                   )}
                 </>
               )

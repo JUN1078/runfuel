@@ -20,7 +20,7 @@ export function AuthLayout() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-primary)]/15">
             <span className="icon-[tabler--run] text-3xl text-[var(--color-primary)]" />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight">
+          <h1 className="text-3xl font-light tracking-tight">
             <span className="text-[var(--color-primary)]">Run</span><span className="text-[var(--color-text)]">Fuel</span>
           </h1>
           <p className="mt-2 text-sm text-[var(--color-text-muted)]">

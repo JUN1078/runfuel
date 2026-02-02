@@ -13,7 +13,7 @@ export function CardHeader({ className, ...props }: CardProps) {
 export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]', className)}
+      className={cn('text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]', className)}
       {...props}
     />
   );

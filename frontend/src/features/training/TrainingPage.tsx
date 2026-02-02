@@ -142,8 +142,8 @@ export function TrainingPage() {
   const activePlan = plans.find(p => p.is_active);
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight">Training</h1>
+    <div className="space-y-7">
+      <h1 className="text-2xl font-light tracking-tight">Training</h1>
 
       <div className="tab-group">
         {(['plan', 'races'] as const).map(t => (
@@ -155,7 +155,7 @@ export function TrainingPage() {
 
       {/* PLAN TAB */}
       {tab === 'plan' && (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {!createMode && !showGenerate && !showManual && (
             <div className="grid grid-cols-2 gap-3">
               <button onClick={() => { setCreateMode('ai'); setShowGenerate(true); }}
@@ -172,11 +172,11 @@ export function TrainingPage() {
           {/* AI Generate form */}
           {showGenerate && (
             <div className="glass-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
+              <h3 className="text-sm font-normal flex items-center gap-2">
                 <Sparkles size={14} className="text-purple-400" /> AI Training Plan
               </h3>
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Race Target</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Race Target</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="mb-1 block text-[11px] text-[var(--color-text-muted)]">Race Name</label>
@@ -204,7 +204,7 @@ export function TrainingPage() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Your Performance / Strava Stats</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Your Performance / Strava Stats</p>
                 <p className="text-[11px] text-[var(--color-text-muted)]">Enter stats from Strava or your running log for a personalized plan</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -248,7 +248,7 @@ export function TrainingPage() {
           {/* Manual Plan form */}
           {showManual && (
             <div className="glass-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
+              <h3 className="text-sm font-normal flex items-center gap-2">
                 <Edit3 size={14} className="text-blue-400" /> Create Manual Plan
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -266,7 +266,7 @@ export function TrainingPage() {
                 </div>
               </div>
 
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Weekly Sessions</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Weekly Sessions</p>
               <div className="space-y-2">
                 {manualSessions.map((s, i) => (
                   <div key={i} className="flex flex-wrap gap-2 items-end">
@@ -315,11 +315,11 @@ export function TrainingPage() {
 
           {/* Active plan */}
           {activePlan ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="glass-card p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold">{activePlan.name}</h3>
+                    <h3 className="font-normal">{activePlan.name}</h3>
                     <div className="text-xs text-[var(--color-text-muted)]">
                       {activePlan.start_date} — {activePlan.end_date} · {activePlan.weeks} weeks
                     </div>
@@ -352,7 +352,7 @@ export function TrainingPage() {
                 const weekSessions = activePlan.sessions.filter(s => s.week_number === week);
                 return (
                   <div key={week}>
-                    <h4 className="text-xs font-semibold text-[var(--color-text-muted)] mb-2 uppercase tracking-wider">Week {week}</h4>
+                    <h4 className="text-xs font-medium text-[var(--color-text-muted)] mb-2 uppercase tracking-wider">Week {week}</h4>
                     <div className="space-y-1.5">
                       {weekSessions.map(session => {
                         const info = sessionTypeLabels[session.session_type] || { label: session.session_type, color: '#64748b', emoji: '🏃' };
@@ -367,7 +367,7 @@ export function TrainingPage() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
                                 <span>{info.emoji}</span>
-                                <span className={`text-sm font-medium ${session.completed ? 'line-through opacity-50' : ''}`}>
+                                <span className={`text-sm font-normal ${session.completed ? 'line-through opacity-50' : ''}`}>
                                   {info.label}
                                 </span>
                               </div>
@@ -377,7 +377,7 @@ export function TrainingPage() {
                             </div>
                             <div className="text-right shrink-0">
                               {session.target_distance_km && (
-                                <div className="text-xs font-medium">{session.target_distance_km}km</div>
+                                <div className="text-xs font-normal">{session.target_distance_km}km</div>
                               )}
                               <div className="text-[10px] text-[var(--color-text-muted)] capitalize">{session.day_of_week.slice(0,3)}</div>
                             </div>
@@ -392,7 +392,7 @@ export function TrainingPage() {
           ) : !showGenerate && !showManual && (
             <div className="glass-card p-8 text-center">
               <Calendar size={32} className="mx-auto mb-3 text-[var(--color-text-muted)]" />
-              <p className="font-medium">No active training plan</p>
+              <p className="font-normal">No active training plan</p>
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">Generate one with AI or create manually</p>
             </div>
           )}
@@ -401,14 +401,14 @@ export function TrainingPage() {
 
       {/* RACES TAB */}
       {tab === 'races' && (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <button onClick={() => setShowNewRace(true)} className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-sm">
             <Plus size={16} /> Add Race
           </button>
 
           {showNewRace && (
             <div className="glass-card p-4 space-y-4">
-              <h3 className="text-sm font-semibold flex items-center gap-2">
+              <h3 className="text-sm font-normal flex items-center gap-2">
                 <Flag size={14} className="text-[var(--color-primary)]" /> New Race
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -459,7 +459,7 @@ export function TrainingPage() {
           )}
 
           {races.length > 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {races.map(race => {
                 const isUpcoming = race.status === 'upcoming';
                 const daysUntil = isUpcoming ? Math.ceil((new Date(race.race_date).getTime() - Date.now()) / 86400000) : null;
@@ -469,7 +469,7 @@ export function TrainingPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <Flag size={14} className={isUpcoming ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'} />
-                          <span className="font-semibold truncate">{race.name}</span>
+                          <span className="font-normal truncate">{race.name}</span>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-[var(--color-text-muted)]">
                           <span className="flex items-center gap-1"><Calendar size={10} /> {race.race_date}</span>
@@ -484,7 +484,7 @@ export function TrainingPage() {
                           isUpcoming ? 'bg-green-500/10 text-green-400' : race.status === 'completed' ? 'bg-blue-500/10 text-blue-400' : 'bg-red-500/10 text-red-400'
                         }`}>{race.status}</span>
                         {daysUntil != null && daysUntil > 0 && (
-                          <div className="mt-1 text-xs font-medium text-[var(--color-primary)]">{daysUntil}d</div>
+                          <div className="mt-1 text-xs font-normal text-[var(--color-primary)]">{daysUntil}d</div>
                         )}
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export function TrainingPage() {
           ) : !showNewRace && (
             <div className="glass-card p-8 text-center">
               <Flag size={32} className="mx-auto mb-3 text-[var(--color-text-muted)]" />
-              <p className="font-medium">No races yet</p>
+              <p className="font-normal">No races yet</p>
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">Add upcoming races to plan your training</p>
             </div>
           )}

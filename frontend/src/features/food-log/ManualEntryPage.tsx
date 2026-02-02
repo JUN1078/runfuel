@@ -45,17 +45,17 @@ export function ManualEntryPage() {
   const mealEmoji: Record<string, string> = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-7">
       <div className="flex items-center gap-3">
         <button type="button" onClick={() => navigate('/dashboard')} className="rounded-lg p-1.5 hover:bg-white/5 transition-colors">
           <ArrowLeft size={20} className="text-[var(--color-text-muted)]" />
         </button>
-        <h1 className="text-2xl font-bold tracking-tight">Manual Food Entry</h1>
+        <h1 className="text-2xl font-light tracking-tight">Manual Food Entry</h1>
       </div>
 
       {/* Meal type */}
       <div>
-        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
+        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
         <div className="grid grid-cols-4 gap-2">
           {mealTypes.map((type) => (
             <button
@@ -64,7 +64,7 @@ export function ManualEntryPage() {
               onClick={() => setMealType(type)}
               className={`rounded-xl py-2.5 text-xs font-medium transition-all ${
                 mealType === type
-                  ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
+                  ? 'bg-[var(--color-primary)] text-[#0B1C22] shadow-[0_2px_8px_rgba(94,212,198,0.25)]'
                   : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
@@ -78,7 +78,7 @@ export function ManualEntryPage() {
       {/* Food details */}
       <div className="glass-card p-4 space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Food Name *</label>
+          <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Food Name *</label>
           <input
             type="text"
             value={foodName}
@@ -89,7 +89,7 @@ export function ManualEntryPage() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Portion</label>
+          <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Portion</label>
           <input
             type="text"
             value={portion}
@@ -99,7 +99,7 @@ export function ManualEntryPage() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Calories *</label>
+          <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Calories *</label>
           <input
             type="number"
             value={calories}
@@ -114,7 +114,7 @@ export function ManualEntryPage() {
 
       {/* Macros */}
       <div className="glass-card p-4">
-        <label className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Macros (optional)</label>
+        <label className="mb-3 block text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Macros (optional)</label>
         <div className="grid grid-cols-3 gap-3">
           <div>
             <div className="flex items-center gap-1.5 mb-1.5">

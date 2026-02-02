@@ -56,8 +56,8 @@ export function AchievementsPage() {
   const earnedCount = badges.filter(b => b.earned).length;
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight">Achievements</h1>
+    <div className="space-y-7">
+      <h1 className="text-2xl font-light tracking-tight">Achievements</h1>
 
       {/* Level & XP Card */}
       {stats && (
@@ -68,12 +68,12 @@ export function AchievementsPage() {
                 <Trophy size={24} className="text-purple-400" />
               </div>
               <div>
-                <div className="text-lg font-bold">Level {stats.level}</div>
+                <div className="text-lg font-light">Level {stats.level}</div>
                 <div className="text-xs text-[var(--color-text-muted)]">{stats.total_xp} XP total</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-[var(--color-primary)]">{earnedCount}</div>
+              <div className="text-2xl font-light text-[var(--color-primary)]">{earnedCount}</div>
               <div className="text-[10px] text-[var(--color-text-muted)]">/{badges.length} badges</div>
             </div>
           </div>
@@ -98,22 +98,20 @@ export function AchievementsPage() {
             <div className={`mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg ${bg}`}>
               <Icon size={14} className={color} />
             </div>
-            <div className="text-lg font-bold">{value}</div>
+            <div className="text-lg font-light">{value}</div>
             <div className="text-[9px] text-[var(--color-text-muted)]">{label}</div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl bg-[var(--color-surface)] p-1">
+      <div className="tab-group">
         {(['badges', 'progress'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 rounded-lg py-2 text-xs font-semibold capitalize transition-all ${
-              tab === t ? 'bg-[var(--color-primary)] text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
-            }`}
-          >{t}</button>
+            className={tab === t ? 'tab-item-active' : 'tab-item'}
+          >{t === 'badges' ? 'Badges' : 'Progress'}</button>
         ))}
       </div>
 
@@ -137,7 +135,7 @@ export function AchievementsPage() {
                 >
                   <Icon size={18} style={{ color }} />
                 </div>
-                <div className="text-[11px] font-semibold leading-tight">{b.badge.name}</div>
+                <div className="text-[11px] font-normal leading-tight">{b.badge.name}</div>
                 <div className="mt-0.5 text-[9px] text-[var(--color-text-muted)] leading-tight">{b.badge.description}</div>
                 {b.earned && (
                   <div className="mt-1 text-[9px] font-medium text-[var(--color-primary)]">+{b.badge.xp_reward} XP</div>
@@ -150,13 +148,13 @@ export function AchievementsPage() {
 
       {/* Progress Tab */}
       {tab === 'progress' && (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {/* Consistency */}
           {consistency && (
             <div className="glass-card p-4">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold">30-Day Consistency</h3>
-                <span className="text-lg font-bold text-[var(--color-primary)]">{Math.round(consistency.score)}%</span>
+                <h3 className="text-sm font-normal">30-Day Consistency</h3>
+                <span className="text-lg font-light text-[var(--color-primary)]">{Math.round(consistency.score)}%</span>
               </div>
               <div className="h-2 rounded-full bg-[var(--color-surface-light)] overflow-hidden">
                 <div className="progress-bar h-full" style={{ width: `${consistency.score}%` }} />
@@ -170,15 +168,15 @@ export function AchievementsPage() {
           {/* Weekly Summary */}
           {weekly && (
             <div className="glass-card p-4">
-              <h3 className="text-sm font-semibold mb-3">This Week</h3>
+              <h3 className="text-sm font-normal mb-3">This Week</h3>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <div className="text-[var(--color-text-muted)] text-xs">Avg Intake</div>
-                  <div className="text-base font-bold">{weekly.avg_intake_kcal ? Math.round(weekly.avg_intake_kcal) : '—'}</div>
+                  <div className="text-base font-light">{weekly.avg_intake_kcal ? Math.round(weekly.avg_intake_kcal) : '—'}</div>
                 </div>
                 <div>
                   <div className="text-[var(--color-text-muted)] text-xs">Days Logged</div>
-                  <div className="text-base font-bold">{weekly.days_logged}/7</div>
+                  <div className="text-base font-light">{weekly.days_logged}/7</div>
                 </div>
               </div>
 
@@ -193,11 +191,11 @@ export function AchievementsPage() {
                     { day: 'S', intake: weekly.avg_intake_kcal || 0, target: weekly.avg_target_kcal || 0 },
                     { day: 'S', intake: weekly.avg_intake_kcal || 0, target: weekly.avg_target_kcal || 0 },
                   ]}>
-                    <XAxis dataKey="day" stroke="#64748b" fontSize={10} />
-                    <YAxis stroke="#64748b" fontSize={10} />
-                    <Tooltip contentStyle={{ background: '#141b2d', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, fontSize: 12 }} />
+                    <XAxis dataKey="day" stroke="#6E8A8F" fontSize={10} />
+                    <YAxis stroke="#6E8A8F" fontSize={10} />
+                    <Tooltip contentStyle={{ background: '#0E2A2F', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, fontSize: 12 }} />
                     <Bar dataKey="target" fill="rgba(255,255,255,0.05)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="intake" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="intake" fill="#5ED4C6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

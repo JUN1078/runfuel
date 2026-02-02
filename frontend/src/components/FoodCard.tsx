@@ -18,7 +18,7 @@ export function FoodCard({ entry, onDelete, onToggleFavorite }: FoodCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="font-semibold truncate">{entry.food_name}</h4>
+            <h4 className="font-normal truncate">{entry.food_name}</h4>
             {entry.source === 'ai_photo' && (
               <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-medium text-purple-400">
                 <Camera size={9} /> AI
@@ -50,7 +50,7 @@ export function FoodCard({ entry, onDelete, onToggleFavorite }: FoodCardProps) {
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className="text-lg font-bold text-[var(--color-primary)]">
+          <span className="text-lg font-light text-[var(--color-primary)]">
             {Math.round(entry.calories)}
           </span>
           <span className="text-[10px] text-[var(--color-text-muted)]">kcal</span>

@@ -78,14 +78,14 @@ export function ProfilePage() {
   const bmr = profile.bmr ? Math.round(profile.bmr) : 0;
 
   return (
-    <div className="space-y-5 stagger-children">
+    <div className="space-y-7 stagger-children">
       {/* Profile header */}
       <div className="glass-card p-5">
         <div className="flex items-center gap-4">
           <Avatar fallback={initials} size="xl" />
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold tracking-tight truncate">{user.email}</h1>
-            <div className="mt-1 flex flex-wrap items-center gap-2">
+            <h1 className="text-lg font-light tracking-tight truncate">{user.email}</h1>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <Badge variant="default">
                 <span className="icon-[tabler--run] text-[11px]" /> Runner
               </Badge>
@@ -100,7 +100,7 @@ export function ProfilePage() {
         </div>
       </div>
 
-      {/* Calorie target — hero stat */}
+      {/* Calorie target */}
       <Card>
         <CardHeader>
           <Target size={14} className="text-[var(--color-primary)]" />
@@ -108,10 +108,10 @@ export function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-extrabold tracking-tight text-[var(--color-primary)]">
+            <span className="text-4xl font-light tracking-tight text-[var(--color-primary)]">
               {target || '—'}
             </span>
-            <span className="text-sm font-medium text-[var(--color-text-muted)]">kcal / day</span>
+            <span className="text-sm text-[var(--color-text-muted)]">kcal / day</span>
           </div>
 
           {tdee > 0 && (
@@ -119,21 +119,21 @@ export function ProfilePage() {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[var(--color-text-muted)]">BMR (Basal Metabolic Rate)</span>
-                  <span className="font-semibold">{bmr} kcal</span>
+                  <span className="font-normal">{bmr} kcal</span>
                 </div>
                 <Progress value={bmr} max={tdee + 400} />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[var(--color-text-muted)]">TDEE (Total Daily Expenditure)</span>
-                  <span className="font-semibold">{tdee} kcal</span>
+                  <span className="font-normal">{tdee} kcal</span>
                 </div>
                 <Progress value={tdee} max={tdee + 400} />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[var(--color-text-muted)]">Your Target</span>
-                  <span className="font-semibold text-[var(--color-primary)]">{target} kcal</span>
+                  <span className="font-normal text-[var(--color-primary)]">{target} kcal</span>
                 </div>
                 <Progress value={target} max={tdee + 400} indicatorClassName="!bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
               </div>
@@ -165,7 +165,7 @@ export function ProfilePage() {
                     </div>
                     <span className="text-sm text-[var(--color-text-secondary)]">{item.label}</span>
                   </div>
-                  <span className="text-sm font-semibold capitalize">{item.value}</span>
+                  <span className="text-sm font-normal capitalize">{item.value}</span>
                 </div>
                 {i < arr.length - 1 && <Separator />}
               </div>
@@ -178,9 +178,9 @@ export function ProfilePage() {
       <div>
         <div className="mb-3 flex items-center gap-2">
           <Flame size={14} className="text-[var(--color-warning)]" />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Current Goal</h3>
+          <h3 className="text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">Current Goal</h3>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {goalOptions.map((opt) => {
             const Icon = opt.icon;
             const selected = profile.goal === opt.value;
@@ -205,7 +205,7 @@ export function ProfilePage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">{opt.label}</span>
+                    <span className="font-normal text-sm">{opt.label}</span>
                     {selected && <Badge variant="default">Active</Badge>}
                   </div>
                   <p className="mt-0.5 text-xs text-[var(--color-text-muted)] leading-relaxed">{opt.desc}</p>
@@ -229,7 +229,7 @@ export function ProfilePage() {
         <CardContent>
           <div className="flex items-center justify-between py-1">
             <span className="text-sm text-[var(--color-text-secondary)]">Email</span>
-            <span className="text-sm font-medium truncate ml-4">{user.email}</span>
+            <span className="text-sm font-normal truncate ml-4">{user.email}</span>
           </div>
         </CardContent>
       </Card>
@@ -237,7 +237,7 @@ export function ProfilePage() {
       {/* Logout */}
       <button
         onClick={handleLogout}
-        className="glass-card flex w-full items-center justify-center gap-2 py-3.5 text-sm font-semibold text-[var(--color-danger)] transition-all hover:bg-red-500/5 hover:-translate-y-0.5 active:translate-y-0"
+        className="glass-card flex w-full items-center justify-center gap-2 py-3.5 text-sm font-normal text-[var(--color-danger)] transition-all hover:bg-red-500/5 hover:-translate-y-0.5 active:translate-y-0"
       >
         <LogOut size={16} /> Log Out
       </button>

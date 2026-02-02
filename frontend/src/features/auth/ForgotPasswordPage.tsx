@@ -22,7 +22,7 @@ export function ForgotPasswordPage() {
     return (
       <div className="text-center">
         <span className="icon-[tabler--mail-check] mx-auto mb-3 text-4xl text-[var(--color-primary)]" />
-        <h2 className="mb-2 text-xl font-semibold">Check your email</h2>
+        <h2 className="mb-2 text-xl font-light">Check your email</h2>
         <p className="mb-6 text-sm text-[var(--color-text-muted)]">
           If an account exists for {email}, we sent a reset link.
         </p>
@@ -35,7 +35,7 @@ export function ForgotPasswordPage() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-semibold">Reset Password</h2>
+      <h2 className="text-xl font-light">Reset Password</h2>
       <p className="text-sm text-[var(--color-text-muted)]">
         Enter your email and we'll send you a reset link.
       </p>
