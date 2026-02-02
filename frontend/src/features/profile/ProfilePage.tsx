@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import { LogOut, Flame, Zap, Dumbbell, User2, Activity, Target } from 'lucide-react';
+import {
+  LogOut, Flame, Zap, Dumbbell, Activity, Target,
+  ChevronRight, Mail, Ruler, Weight, Calendar, Gauge,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
 import apiClient from '../../api/client';
+import { Avatar } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import type { User, Goal } from '../../types/user';
 
 export function ProfilePage() {
@@ -17,7 +26,7 @@ export function ProfilePage() {
       try {
         const { data } = await apiClient.get<User>('/api/v1/users/me');
         setUser(data);
-      } catch {}
+      } catch { /* ignore */ }
     };
     fetchUser();
   }, []);
@@ -44,106 +53,133 @@ export function ProfilePage() {
     }
   };
 
-  const goalOptions: { value: Goal; label: string; icon: typeof Flame; desc: string; color: string }[] = [
-    { value: 'deficit', label: 'Fat Loss', icon: Flame, desc: '-400 kcal/day', color: 'text-orange-400' },
-    { value: 'performance', label: 'Performance', icon: Zap, desc: 'Maintenance', color: 'text-blue-400' },
-    { value: 'bulking', label: 'Muscle Gain', icon: Dumbbell, desc: '+400 kcal/day', color: 'text-purple-400' },
+  const goalOptions: { value: Goal; label: string; icon: typeof Flame; desc: string; tagVariant: 'orange' | 'accent' | 'purple' }[] = [
+    { value: 'deficit', label: 'Fat Loss', icon: Flame, desc: 'Calorie deficit of ~400 kcal/day for lean body composition', tagVariant: 'orange' },
+    { value: 'performance', label: 'Performance', icon: Zap, desc: 'Maintenance calories optimized for running performance', tagVariant: 'accent' },
+    { value: 'bulking', label: 'Muscle Gain', icon: Dumbbell, desc: 'Surplus of ~400 kcal/day to support muscle growth', tagVariant: 'purple' },
   ];
 
   if (!user || !user.profile) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 stagger-children">
         <div className="skeleton h-8 w-32" />
-        <div className="skeleton h-24" />
+        <div className="skeleton h-28" />
+        <div className="skeleton h-40" />
         <div className="skeleton h-32" />
-        <div className="skeleton h-32" />
+        <div className="skeleton h-48" />
       </div>
     );
   }
 
   const profile = user.profile;
+  const initials = user.email.slice(0, 2).toUpperCase();
+  const tdee = profile.tdee ? Math.round(profile.tdee) : 0;
+  const target = profile.daily_target_kcal ? Math.round(profile.daily_target_kcal) : 0;
+  const bmr = profile.bmr ? Math.round(profile.bmr) : 0;
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-
-      {/* User info */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-primary)]/15">
-            <User2 size={24} className="text-[var(--color-primary)]" />
-          </div>
-          <div>
-            <p className="font-semibold">{user.email}</p>
-            <p className="text-xs text-[var(--color-text-muted)]">Runner since day one</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Body metrics */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Activity size={14} className="text-[var(--color-primary)]" />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Body Metrics</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: 'Age', value: `${profile.age} years` },
-            { label: 'Gender', value: profile.gender },
-            { label: 'Height', value: `${profile.height_cm} cm` },
-            { label: 'Weight', value: `${profile.weight_kg} kg` },
-          ].map(item => (
-            <div key={item.label} className="rounded-xl bg-[var(--color-bg)]/50 p-3">
-              <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">{item.label}</div>
-              <div className="mt-1 text-sm font-semibold capitalize">{item.value}</div>
+    <div className="space-y-5 stagger-children">
+      {/* Profile header */}
+      <div className="glass-card p-5">
+        <div className="flex items-center gap-4">
+          <Avatar fallback={initials} size="xl" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold tracking-tight truncate">{user.email}</h1>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <Badge variant="default">
+                <span className="icon-[tabler--run] text-[11px]" /> Runner
+              </Badge>
+              <Badge variant="secondary">
+                {profile.running_frequency} days/week
+              </Badge>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Running profile */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Dumbbell size={14} className="text-[var(--color-accent)]" />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Running Profile</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-xl bg-[var(--color-bg)]/50 p-3">
-            <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">Frequency</div>
-            <div className="mt-1 text-sm font-semibold">{profile.running_frequency} days/week</div>
-          </div>
-          <div className="rounded-xl bg-[var(--color-bg)]/50 p-3">
-            <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">Intensity</div>
-            <div className="mt-1 text-sm font-semibold capitalize">{profile.training_intensity.replace('_', ' ')}</div>
+            <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+              {profile.gender === 'male' ? 'Male' : 'Female'} &middot; {profile.age} years &middot; {profile.height_cm}cm &middot; {profile.weight_kg}kg
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Calorie targets */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Target size={14} className="text-[var(--color-warning)]" />
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Calorie Targets</h3>
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { label: 'BMR', value: profile.bmr ? Math.round(profile.bmr) : '—', highlight: false },
-            { label: 'TDEE', value: profile.tdee ? Math.round(profile.tdee) : '—', highlight: false },
-            { label: 'Daily Target', value: profile.daily_target_kcal ? Math.round(profile.daily_target_kcal) : '—', highlight: true },
-          ].map(item => (
-            <div key={item.label} className="rounded-xl bg-[var(--color-bg)]/50 p-3 text-center">
-              <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">{item.label}</div>
-              <div className={`mt-1 text-lg font-bold ${item.highlight ? 'text-[var(--color-primary)]' : ''}`}>
-                {item.value}
+      {/* Calorie target — hero stat */}
+      <Card>
+        <CardHeader>
+          <Target size={14} className="text-[var(--color-primary)]" />
+          <CardTitle>Daily Calorie Target</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-4xl font-extrabold tracking-tight text-[var(--color-primary)]">
+              {target || '—'}
+            </span>
+            <span className="text-sm font-medium text-[var(--color-text-muted)]">kcal / day</span>
+          </div>
+
+          {tdee > 0 && (
+            <div className="space-y-3">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--color-text-muted)]">BMR (Basal Metabolic Rate)</span>
+                  <span className="font-semibold">{bmr} kcal</span>
+                </div>
+                <Progress value={bmr} max={tdee + 400} />
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--color-text-muted)]">TDEE (Total Daily Expenditure)</span>
+                  <span className="font-semibold">{tdee} kcal</span>
+                </div>
+                <Progress value={tdee} max={tdee + 400} />
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[var(--color-text-muted)]">Your Target</span>
+                  <span className="font-semibold text-[var(--color-primary)]">{target} kcal</span>
+                </div>
+                <Progress value={target} max={tdee + 400} indicatorClassName="!bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]" />
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Body & Running stats */}
+      <Card>
+        <CardHeader>
+          <Activity size={14} className="text-[var(--color-accent)]" />
+          <CardTitle>Stats</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-0">
+            {[
+              { icon: Calendar, label: 'Age', value: `${profile.age} years` },
+              { icon: Ruler, label: 'Height', value: `${profile.height_cm} cm` },
+              { icon: Weight, label: 'Weight', value: `${profile.weight_kg} kg` },
+              { icon: Activity, label: 'Frequency', value: `${profile.running_frequency} days/week` },
+              { icon: Gauge, label: 'Intensity', value: profile.training_intensity.replace('_', ' ') },
+            ].map((item, i, arr) => (
+              <div key={item.label}>
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-surface-light)]">
+                      <item.icon size={15} className="text-[var(--color-text-muted)]" />
+                    </div>
+                    <span className="text-sm text-[var(--color-text-secondary)]">{item.label}</span>
+                  </div>
+                  <span className="text-sm font-semibold capitalize">{item.value}</span>
+                </div>
+                {i < arr.length - 1 && <Separator />}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Goal selector */}
       <div>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Current Goal</h3>
+        <div className="mb-3 flex items-center gap-2">
+          <Flame size={14} className="text-[var(--color-warning)]" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Current Goal</h3>
+        </div>
         <div className="space-y-2">
           {goalOptions.map((opt) => {
             const Icon = opt.icon;
@@ -153,34 +189,57 @@ export function ProfilePage() {
                 key={opt.value}
                 onClick={() => handleGoalChange(opt.value)}
                 disabled={loading || selected}
-                className={`glass-card flex w-full items-center gap-3 p-4 text-left transition-all disabled:opacity-60 ${
-                  selected ? 'ring-1 ring-[var(--color-primary)]' : 'hover:bg-[var(--color-surface-hover)]'
-                }`}
-              >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                  selected ? 'bg-[var(--color-primary)]/15' : 'bg-[var(--color-surface-light)]'
-                }`}>
-                  <Icon size={20} className={selected ? 'text-[var(--color-primary)]' : opt.color} />
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-sm">{opt.label}</div>
-                  <div className="text-xs text-[var(--color-text-muted)]">{opt.desc}</div>
-                </div>
-                {selected && (
-                  <div className="h-2.5 w-2.5 rounded-full bg-[var(--color-primary)]" />
+                className={cn(
+                  'glass-card flex w-full items-center gap-3 p-4 text-left transition-all',
+                  selected
+                    ? 'ring-1 ring-[var(--color-primary)] bg-[var(--color-primary)]/[0.03]'
+                    : 'hover:bg-[var(--color-surface-hover)] hover:-translate-y-0.5',
+                  'disabled:opacity-60',
                 )}
+              >
+                <div className={cn(
+                  'flex h-11 w-11 items-center justify-center rounded-xl transition-colors',
+                  selected ? 'bg-[var(--color-primary)]/15' : 'bg-[var(--color-surface-light)]',
+                )}>
+                  <Icon size={20} className={selected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">{opt.label}</span>
+                    {selected && <Badge variant="default">Active</Badge>}
+                  </div>
+                  <p className="mt-0.5 text-xs text-[var(--color-text-muted)] leading-relaxed">{opt.desc}</p>
+                </div>
+                <ChevronRight size={16} className={cn(
+                  'shrink-0 transition-colors',
+                  selected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]',
+                )} />
               </button>
             );
           })}
         </div>
       </div>
 
+      {/* Account section */}
+      <Card>
+        <CardHeader>
+          <Mail size={14} className="text-[var(--color-text-muted)]" />
+          <CardTitle>Account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between py-1">
+            <span className="text-sm text-[var(--color-text-secondary)]">Email</span>
+            <span className="text-sm font-medium truncate ml-4">{user.email}</span>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Logout */}
       <button
         onClick={handleLogout}
-        className="glass-card flex w-full items-center justify-center gap-2 py-3.5 font-semibold text-[var(--color-danger)] transition-colors hover:bg-red-500/5"
+        className="glass-card flex w-full items-center justify-center gap-2 py-3.5 text-sm font-semibold text-[var(--color-danger)] transition-all hover:bg-red-500/5 hover:-translate-y-0.5 active:translate-y-0"
       >
-        <LogOut size={18} /> Log Out
+        <LogOut size={16} /> Log Out
       </button>
     </div>
   );
