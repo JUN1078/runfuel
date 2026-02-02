@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Query
+from fastapi import APIRouter, Depends, UploadFile, File, Form, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
@@ -35,6 +35,27 @@ async def analyze_photo(
     image_bytes = await photo.read()
     analysis = await ai_service.analyze_food_photo(image_bytes, user_goal)
 
+    return AIAnalysisResponse(**analysis)
+
+
+@router.post("/analyze-photo-text", response_model=AIAnalysisResponse)
+async def analyze_photo_text(
+    photo: UploadFile = File(...),
+    description: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Analyze food from photo + text description combined for stronger accuracy."""
+    result = await db.execute(
+        select(UserProfile).where(UserProfile.user_id == current_user.id)
+    )
+    profile = result.scalar_one_or_none()
+    user_goal = profile.goal if profile else "performance"
+
+    image_bytes = await photo.read()
+    analysis = await ai_service.analyze_food_photo_with_text(
+        image_bytes, description, user_goal
+    )
     return AIAnalysisResponse(**analysis)
 
 

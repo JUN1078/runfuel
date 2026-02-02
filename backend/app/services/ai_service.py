@@ -52,6 +52,12 @@ ANALYSIS_PROMPT_BASE = (
 
 PHOTO_ANALYSIS_PROMPT = "Analyze this food photo. " + ANALYSIS_PROMPT_BASE
 
+PHOTO_TEXT_ANALYSIS_PROMPT = (
+    "Analyze this food photo. The user also described the food as: \"{description}\"\n"
+    "Use the photo as the primary source and the text description to improve accuracy of "
+    "portion sizes, ingredients, and calorie estimates. " + ANALYSIS_PROMPT_BASE
+)
+
 TEXT_ANALYSIS_PROMPT = (
     "Analyze the following food description and estimate calories and macros as accurately as possible. "
     + ANALYSIS_PROMPT_BASE
@@ -74,6 +80,38 @@ async def analyze_food_photo(image_bytes: bytes, user_goal: str) -> dict:
                 "role": "user",
                 "content": [
                     {"type": "text", "text": PHOTO_ANALYSIS_PROMPT},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        },
+                    },
+                ],
+            },
+        ],
+        max_tokens=1000,
+    )
+
+    return json.loads(response.choices[0].message.content)
+
+
+async def analyze_food_photo_with_text(
+    image_bytes: bytes, description: str, user_goal: str
+) -> dict:
+    """Send food photo + text description to OpenAI Vision for stronger analysis."""
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+    system_prompt = SYSTEM_PROMPTS.get(user_goal, SYSTEM_PROMPTS["performance"])
+    prompt = PHOTO_TEXT_ANALYSIS_PROMPT.format(description=description)
+
+    response = await _get_client().chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
                     {
                         "type": "image_url",
                         "image_url": {

@@ -16,6 +16,16 @@ export const foodApi = {
       timeout: 30000,
     }),
 
+  analyzePhotoWithText: (file: File, description: string) => {
+    const formData = new FormData();
+    formData.append('photo', file);
+    formData.append('description', description);
+    return apiClient.post<AIAnalysisResponse>('/api/v1/food/analyze-photo-text', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 45000,
+    });
+  },
+
   confirmAnalysis: (data: ConfirmAnalysisRequest) =>
     apiClient.post<FoodEntry[]>('/api/v1/food/confirm-analysis', data),
 

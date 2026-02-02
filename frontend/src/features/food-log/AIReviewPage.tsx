@@ -37,7 +37,10 @@ function HealthBadge({ rating, size = 'sm' }: { rating?: HealthRating; size?: 's
 export function AIReviewPage() {
   const navigate = useNavigate();
   const { analysisResult, updateItem, removeItem, reset } = useFoodLogStore();
-  const [mealType, setMealType] = useState<MealType>('lunch');
+  // Use meal type from capture page if available
+  const [mealType, setMealType] = useState<MealType>(
+    (analysisResult as any)?._mealType || 'lunch'
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

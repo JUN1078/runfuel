@@ -40,7 +40,7 @@ export function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-lg space-y-4">
+      <div className="space-y-4">
         <div className="skeleton h-8 w-32 mx-auto" />
         <div className="skeleton h-48 w-48 mx-auto rounded-full" />
         <div className="skeleton h-16" />
@@ -50,7 +50,7 @@ export function DashboardPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-lg">
+      <div>
         <div className="glass-card p-6 text-center">
           <p className="text-[var(--color-danger)]">{error}</p>
           <button onClick={fetchData} className="mt-3 text-sm text-[var(--color-primary)] font-medium">Retry</button>
@@ -65,7 +65,7 @@ export function DashboardPage() {
   const mealIcons: Record<string, string> = { breakfast: '🌅', lunch: '☀️', dinner: '🌙', snack: '🍎' };
 
   return (
-    <div className="mx-auto max-w-lg space-y-5">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

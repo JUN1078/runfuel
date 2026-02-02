@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { to: '/dashboard', icon: 'icon-[tabler--home]', iconActive: 'icon-[tabler--home-filled]', label: 'Home' },
+  { to: '/dashboard', icon: 'icon-[tabler--layout-dashboard]', iconActive: 'icon-[tabler--layout-dashboard]', label: 'Dashboard' },
   { to: '/log/photo', icon: 'icon-[tabler--camera]', iconActive: 'icon-[tabler--camera-filled]', label: 'Log' },
-  { to: '/training', icon: 'icon-[tabler--barbell]', iconActive: 'icon-[tabler--barbell-filled]', label: 'Train' },
+  { to: '/training', icon: 'icon-[tabler--run]', iconActive: 'icon-[tabler--run]', label: 'Train' },
   { to: '/achievements', icon: 'icon-[tabler--trophy]', iconActive: 'icon-[tabler--trophy-filled]', label: 'Score' },
   { to: '/profile', icon: 'icon-[tabler--user-circle]', iconActive: 'icon-[tabler--user-circle]', label: 'Profile' },
 ];
@@ -11,7 +11,7 @@ const navItems = [
 export function Navbar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-surface-border)] bg-[var(--color-surface)]/95 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-lg justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+      <div className="mx-auto flex max-w-2xl justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
         {navItems.map(({ to, icon, iconActive, label }) => (
           <NavLink
             key={to}

@@ -1,19 +1,25 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { Camera, Upload, Loader2, ArrowLeft, Type } from 'lucide-react';
+import { Upload, Loader2, ArrowLeft, Sparkles } from 'lucide-react';
 import { foodApi } from '../../api/food';
 import { useFoodLogStore } from '../../store/foodLogStore';
+import type { MealType } from '../../types/food';
 
-type InputMode = 'photo' | 'text';
+const mealOptions: { type: MealType; emoji: string; label: string }[] = [
+  { type: 'breakfast', emoji: '🌅', label: 'Breakfast' },
+  { type: 'lunch', emoji: '☀️', label: 'Lunch' },
+  { type: 'dinner', emoji: '🌙', label: 'Dinner' },
+  { type: 'snack', emoji: '🍎', label: 'Snack' },
+];
 
 export function PhotoCapturePage() {
   const navigate = useNavigate();
   const { setAnalysisResult, setSelectedPhoto, setAnalyzing, isAnalyzing } = useFoodLogStore();
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const [mode, setMode] = useState<InputMode>('photo');
   const [textInput, setTextInput] = useState('');
+  const [mealType, setMealType] = useState<MealType>('lunch');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -29,34 +35,32 @@ export function PhotoCapturePage() {
     maxSize: 10 * 1024 * 1024,
   });
 
-  const handleAnalyzePhoto = async () => {
+  const handleAnalyze = async () => {
     const { selectedPhoto } = useFoodLogStore.getState();
-    if (!selectedPhoto) return;
+    const hasPhoto = !!selectedPhoto;
+    const hasText = textInput.trim().length >= 3;
 
-    setError('');
-    setAnalyzing(true);
-    try {
-      const { data } = await foodApi.analyzePhoto(selectedPhoto);
-      setAnalysisResult(data);
-      navigate('/log/photo/review');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Analysis failed. Try again or log manually.');
-    } finally {
-      setAnalyzing(false);
-    }
-  };
-
-  const handleAnalyzeText = async () => {
-    if (!textInput.trim() || textInput.trim().length < 3) {
-      setError('Please describe your food (at least 3 characters).');
+    if (!hasPhoto && !hasText) {
+      setError('Please add a photo or describe your food.');
       return;
     }
 
     setError('');
     setAnalyzing(true);
     try {
-      const { data } = await foodApi.analyzeText(textInput.trim());
-      setAnalysisResult(data);
+      let data;
+      if (hasPhoto && hasText) {
+        // Photo + text combined for stronger validation
+        const res = await foodApi.analyzePhotoWithText(selectedPhoto!, textInput.trim());
+        data = res.data;
+      } else if (hasPhoto) {
+        const res = await foodApi.analyzePhoto(selectedPhoto!);
+        data = res.data;
+      } else {
+        const res = await foodApi.analyzeText(textInput.trim());
+        data = res.data;
+      }
+      setAnalysisResult({ ...data, _mealType: mealType } as any);
       navigate('/log/photo/review');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Analysis failed. Try again or log manually.');
@@ -66,7 +70,8 @@ export function PhotoCapturePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* Header */}
       <div className="flex items-center gap-3">
         <button onClick={() => navigate('/dashboard')} className="rounded-lg p-1.5 hover:bg-white/5 transition-colors">
           <ArrowLeft size={20} className="text-[var(--color-text-muted)]" />
@@ -74,112 +79,97 @@ export function PhotoCapturePage() {
         <h1 className="text-2xl font-bold tracking-tight">Log Food</h1>
       </div>
 
-      {/* Mode toggle */}
-      <div className="tab-group">
-        <button
-          onClick={() => setMode('photo')}
-          className={mode === 'photo' ? 'tab-item-active' : 'tab-item'}
-        >
-          <span className="flex items-center justify-center gap-1.5">
-            <Camera size={15} /> Photo
-          </span>
-        </button>
-        <button
-          onClick={() => setMode('text')}
-          className={mode === 'text' ? 'tab-item-active' : 'tab-item'}
-        >
-          <span className="flex items-center justify-center gap-1.5">
-            <Type size={15} /> Describe
-          </span>
-        </button>
-      </div>
-
-      {mode === 'photo' ? (
-        <>
-          {!preview ? (
-            <div
-              {...getRootProps()}
-              className={`glass-card flex h-64 cursor-pointer flex-col items-center justify-center transition-all ${
-                isDragActive
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 pulse-border'
-                  : ''
+      {/* Meal type selector */}
+      <div>
+        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
+        <div className="grid grid-cols-4 gap-2">
+          {mealOptions.map(({ type, emoji, label }) => (
+            <button
+              key={type}
+              onClick={() => setMealType(type)}
+              className={`rounded-xl py-2.5 text-xs font-medium transition-all ${
+                mealType === type
+                  ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
+                  : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
-              <input {...getInputProps()} />
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--color-primary)]/10 mb-4">
-                <Upload size={28} className="text-[var(--color-primary)]" />
-              </div>
-              <p className="font-semibold">Drop a food photo here</p>
-              <p className="mt-1 text-sm text-[var(--color-text-muted)]">or tap to take a photo / choose from gallery</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="glass-card overflow-hidden">
-                <img src={preview} alt="Food" className="h-64 w-full object-cover" />
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setPreview(null);
-                    useFoodLogStore.getState().setSelectedPhoto(null);
-                  }}
-                  className="btn-secondary flex-1 py-3 text-sm"
-                >
-                  Retake
-                </button>
-                <button
-                  onClick={handleAnalyzePhoto}
-                  disabled={isAnalyzing}
-                  className="btn-primary flex flex-1 items-center justify-center gap-2 py-3 text-sm"
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" /> Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <Camera size={18} /> Analyze
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="space-y-4">
-          <div className="glass-card p-4">
-            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-              Describe your food
-            </label>
-            <textarea
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              placeholder="e.g. 2 eggs, toast with butter, and a glass of orange juice"
-              rows={4}
-              className="w-full resize-none"
-            />
-            <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
-              Be specific about portions, cooking methods, and ingredients for accurate estimates.
-            </p>
-          </div>
-          <button
-            onClick={handleAnalyzeText}
-            disabled={isAnalyzing || textInput.trim().length < 3}
-            className="btn-primary flex w-full items-center justify-center gap-2 py-3 text-sm"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 size={18} className="animate-spin" /> Analyzing...
-              </>
-            ) : (
-              <>
-                <Type size={18} /> Analyze Food
-              </>
-            )}
-          </button>
+              <span className="block text-base">{emoji}</span>
+              {label}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* Photo section */}
+      <div>
+        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          Photo
+        </label>
+        {!preview ? (
+          <div
+            {...getRootProps()}
+            className={`glass-card flex h-48 sm:h-64 cursor-pointer flex-col items-center justify-center transition-all ${
+              isDragActive ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 pulse-border' : ''
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-primary)]/10 mb-3">
+              <Upload size={24} className="text-[var(--color-primary)]" />
+            </div>
+            <p className="font-semibold text-sm">Drop a food photo here</p>
+            <p className="mt-1 text-xs text-[var(--color-text-muted)]">or tap to take a photo / choose from gallery</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <div className="glass-card overflow-hidden">
+              <img src={preview} alt="Food" className="h-48 sm:h-64 w-full object-cover" />
+            </div>
+            <button
+              onClick={() => {
+                setPreview(null);
+                useFoodLogStore.getState().setSelectedPhoto(null);
+              }}
+              className="btn-secondary w-full py-2 text-xs"
+            >
+              Remove photo
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Text description — always visible below photo */}
+      <div className="glass-card p-4">
+        <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+          Describe your food {preview ? '(strengthens photo analysis)' : '(or use text only)'}
+        </label>
+        <textarea
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          placeholder="e.g. 2 eggs, toast with butter, and a glass of orange juice"
+          rows={3}
+          className="w-full resize-none"
+        />
+        <p className="mt-1.5 text-[11px] text-[var(--color-text-muted)]">
+          Be specific about portions, cooking methods, and ingredients for accurate estimates.
+        </p>
+      </div>
+
+      {/* Analyze button */}
+      <button
+        onClick={handleAnalyze}
+        disabled={isAnalyzing || (!preview && textInput.trim().length < 3)}
+        className="btn-primary flex w-full items-center justify-center gap-2 py-3.5 text-sm"
+      >
+        {isAnalyzing ? (
+          <>
+            <Loader2 size={18} className="animate-spin" /> Analyzing...
+          </>
+        ) : (
+          <>
+            <Sparkles size={18} /> Analyze Food
+          </>
+        )}
+      </button>
 
       {error && (
         <div className="glass-card border-[var(--color-danger)]/20 p-4 text-sm text-[var(--color-danger)]">
