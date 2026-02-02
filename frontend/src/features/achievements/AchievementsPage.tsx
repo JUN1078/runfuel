@@ -47,7 +47,7 @@ export function AchievementsPage() {
     <div className="space-y-4">
       <div className="skeleton h-32" />
       <div className="skeleton h-24" />
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {[1,2,3,4,5,6].map(i => <div key={i} className="skeleton h-24" />)}
       </div>
     </div>
@@ -87,7 +87,7 @@ export function AchievementsPage() {
       )}
 
       {/* Streak & Stats Row */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[
           { icon: Flame, label: 'Streak', value: stats?.current_streak || 0, color: 'text-orange-400', bg: 'bg-orange-500/10' },
           { icon: Target, label: 'On Target', value: stats?.days_on_target || 0, color: 'text-green-400', bg: 'bg-green-500/10' },
@@ -119,7 +119,7 @@ export function AchievementsPage() {
 
       {/* Badges Grid */}
       {tab === 'badges' && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {badges.map((b, i) => {
             const Icon = iconMap[b.badge.icon] || Star;
             const color = tierColors[b.badge.tier] || '#9ca3af';

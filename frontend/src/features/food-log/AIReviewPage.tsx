@@ -104,18 +104,19 @@ export function AIReviewPage() {
       {/* Meal type selector */}
       <div>
         <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Meal Type</label>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {mealTypes.map((type) => (
             <button
               key={type}
               onClick={() => setMealType(type)}
-              className={`flex-1 rounded-xl py-2.5 text-sm font-medium capitalize transition-all ${
+              className={`rounded-xl py-2.5 text-xs font-medium transition-all ${
                 mealType === type
                   ? 'bg-[var(--color-primary)] text-white shadow-[0_2px_8px_rgba(34,197,94,0.25)]'
                   : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
-              {mealEmoji[type]} {type}
+              <span className="block text-base">{mealEmoji[type]}</span>
+              <span className="capitalize">{type}</span>
             </button>
           ))}
         </div>
