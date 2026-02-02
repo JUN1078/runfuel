@@ -10,8 +10,8 @@ const navItems = [
 
 export function Navbar() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-surface-border)] bg-[var(--color-surface)]/95 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-2xl items-end justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+    <nav className="sticky bottom-0 z-50 border-t border-[var(--color-surface-border)] bg-[var(--color-surface)]/95 backdrop-blur-xl lg:rounded-b-3xl">
+      <div className="flex items-end justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
         {navItems.map(({ to, icon, iconActive, label, center }) => (
           <NavLink
             key={to}

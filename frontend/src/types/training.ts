@@ -64,4 +64,10 @@ export interface GeneratePlanRequest {
   target_time?: string;
   weeks?: number;
   current_weekly_km?: number;
+  elevation_gain?: number;
+  best_5k?: string;
+  best_10k?: string;
+  best_half?: string;
+  best_marathon?: string;
+  avg_long_run?: number;
 }

@@ -353,6 +353,14 @@ input::placeholder, textarea::placeholder {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-surface-light); border-radius: 4px; }
 
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-light) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--color-surface-light); border-radius: 4px; }
+
 /* ─── Accessibility ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

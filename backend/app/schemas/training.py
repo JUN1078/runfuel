@@ -78,6 +78,12 @@ class GeneratePlanRequest(BaseModel):
     target_time: Optional[str] = None
     weeks: int = Field(ge=4, le=24, default=12)
     current_weekly_km: Optional[float] = None
+    elevation_gain: Optional[int] = None
+    best_5k: Optional[str] = None
+    best_10k: Optional[str] = None
+    best_half: Optional[str] = None
+    best_marathon: Optional[str] = None
+    avg_long_run: Optional[float] = None
 
 
 # --- Race ---

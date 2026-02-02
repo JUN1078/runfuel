@@ -79,7 +79,13 @@ export function TrainingPage() {
         race_distance_km: genForm.race_distance_km ? Number(genForm.race_distance_km) : undefined,
         target_time: genForm.target_time || undefined,
         current_weekly_km: genForm.current_weekly_km ? Number(genForm.current_weekly_km) : undefined,
-      } as any);
+        elevation_gain: genForm.elevation_gain ? Number(genForm.elevation_gain) : undefined,
+        best_5k: genForm.best_5k || undefined,
+        best_10k: genForm.best_10k || undefined,
+        best_half: genForm.best_half || undefined,
+        best_marathon: genForm.best_marathon || undefined,
+        avg_long_run: genForm.avg_long_run ? Number(genForm.avg_long_run) : undefined,
+      });
       const { data } = await trainingApi.getPlans();
       setPlans(data);
       setShowGenerate(false);

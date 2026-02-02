@@ -179,18 +179,56 @@ async def generate_training_plan(
         context_parts.append(f"Target time: {data['target_time']}")
     if data.get("current_weekly_km"):
         context_parts.append(f"Current weekly volume: {data['current_weekly_km']}km")
+    if data.get("elevation_gain"):
+        context_parts.append(f"Race elevation gain: {data['elevation_gain']}m")
+    if data.get("avg_long_run"):
+        context_parts.append(f"Average long run distance: {data['avg_long_run']}km")
+
+    # Performance bests (from Strava or manual input)
+    pbs = []
+    if data.get("best_5k"):
+        pbs.append(f"5K: {data['best_5k']}")
+    if data.get("best_10k"):
+        pbs.append(f"10K: {data['best_10k']}")
+    if data.get("best_half"):
+        pbs.append(f"Half Marathon: {data['best_half']}")
+    if data.get("best_marathon"):
+        pbs.append(f"Marathon: {data['best_marathon']}")
+    if pbs:
+        context_parts.append(f"Personal bests: {', '.join(pbs)}")
 
     weeks = data.get("weeks", 12)
     today = date.today()
     start_date = today + timedelta(days=(7 - today.weekday()))  # Next Monday
     end_date = start_date + timedelta(weeks=weeks)
 
-    prompt = f"""Generate a {weeks}-week running training plan.
+    prompt = f"""Generate a {weeks}-week running training plan using proper periodization theory.
 
 Context:
 {chr(10).join(context_parts)}
 
 Plan starts: {start_date}, ends: {end_date}
+
+PERIODIZATION STRUCTURE (apply based on plan length):
+1. **Base/Foundation Phase** (~30-40% of plan): Build aerobic base with mostly easy runs, gradually increasing weekly volume by no more than 10% per week. Include 1 long run per week.
+2. **Build/Specific Phase** (~30-40% of plan): Introduce quality workouts — tempo runs, intervals, and race-specific sessions. Maintain long run progression. Add elevation work if race has significant climbing.
+3. **Peak Phase** (~15-20% of plan): Highest training load. Race-pace workouts, back-to-back long runs for ultra distances. Simulate race conditions.
+4. **Taper Phase** (final 2-3 weeks): Reduce volume by 40-60% while maintaining intensity. Keep short sharp sessions, drop volume.
+
+LOAD MANAGEMENT:
+- Follow a 3:1 load/recovery cycle — every 4th week should be a recovery week (reduce volume 20-30%)
+- Hard/easy day alternation — never schedule two hard sessions back to back
+- Weekly long run should be 25-35% of total weekly distance
+
+SPORTS MASSAGE / RECOVERY SCHEDULING:
+- Schedule a "recovery" session with description "Sports massage — recovery & injury prevention" every 2 weeks
+- Time these after the highest-volume weeks or after accumulating ~100-150km
+- Place them on a rest day or the day after the long run
+
+PACING (use personal bests if provided to calculate training paces):
+- Easy runs: conversational pace, ~60-70% max HR
+- Tempo: comfortably hard, ~80-85% max HR
+- Intervals: 90-95% effort, with equal or greater recovery
 
 Return a JSON object:
 {{
@@ -201,7 +239,7 @@ Return a JSON object:
       "day": "monday",
       "time_of_day": "morning",
       "type": "easy_run|tempo|interval|long_run|recovery|rest|strength|cross_training|trail",
-      "description": "brief description",
+      "description": "brief description including pace guidance where relevant",
       "distance_km": number or null,
       "duration_min": number or null,
       "elevation_m": number or null
@@ -209,8 +247,9 @@ Return a JSON object:
   ]
 }}
 
-Include rest days. Build volume progressively with a taper in final 2 weeks.
-Use session types: easy_run, tempo, interval, long_run, recovery, rest, strength, cross_training, trail."""
+Generate sessions for EVERY day of EVERY week (7 sessions per week, {weeks * 7} total).
+Use session types: easy_run, tempo, interval, long_run, recovery, rest, strength, cross_training, trail.
+Mark rest and massage days as type "rest" or "recovery" respectively."""
 
     response = await _get_ai_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
@@ -218,11 +257,16 @@ Use session types: easy_run, tempo, interval, long_run, recovery, rest, strength
         messages=[
             {
                 "role": "system",
-                "content": "You are an expert running coach. Generate detailed, periodized training plans.",
+                "content": (
+                    "You are an expert running coach certified in periodization methodology. "
+                    "You design training plans following Lydiard, Daniels, and Pfitzinger principles. "
+                    "Generate detailed, scientifically periodized training plans that include proper "
+                    "load management, recovery scheduling, and sports massage integration."
+                ),
             },
             {"role": "user", "content": prompt},
         ],
-        max_tokens=4000,
+        max_tokens=16000,
     )
 
     result = json.loads(response.choices[0].message.content)
